@@ -848,6 +848,50 @@ body{transition:background-color .4s ease,color .4s ease}
   .svc-intro{position:static}
   .svc-intro .h2{max-width:18ch}
 }
+
+/* whatsapp chat widget (icon: Simple Icons, CC0) */
+.wa{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom,0px));inset-inline-end:20px;z-index:60;display:flex;flex-direction:column;align-items:flex-end;gap:14px;pointer-events:none}
+.wa > *{pointer-events:auto}
+.wa-fab{position:relative;width:58px;height:58px;border-radius:50%;border:0;cursor:pointer;display:grid;place-items:center;background:#25D366;color:#fff;box-shadow:0 10px 30px -6px rgba(0,0,0,.45),0 0 0 1px rgba(255,255,255,.06);transition:transform .35s var(--ease),box-shadow .35s}
+.wa-fab svg{width:30px;height:30px;transition:transform .35s var(--ease),opacity .2s}
+.wa-fab .x{position:absolute;inset:0;display:grid;place-items:center;font-size:30px;line-height:1;opacity:0;transform:rotate(-90deg);transition:transform .35s var(--ease),opacity .2s}
+.wa-fab:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 16px 36px -8px rgba(37,211,102,.55)}
+.wa-fab::before{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid #25D366;animation:waPulse 2.6s ease-out infinite;pointer-events:none}
+@keyframes waPulse{0%{transform:scale(1);opacity:.7}80%,100%{transform:scale(1.55);opacity:0}}
+.wa.open .wa-fab::before{animation:none;opacity:0}
+.wa.open .wa-fab svg{opacity:0;transform:rotate(90deg) scale(.6)}
+.wa.open .wa-fab .x{opacity:1;transform:none}
+.wa-tip{position:absolute;inset-inline-end:calc(100% + 12px);top:50%;transform:translateY(-50%);white-space:nowrap;background:var(--card-solid);color:var(--text);border:1px solid var(--line);font-size:.86rem;font-weight:500;padding:8px 12px;border-radius:10px;opacity:0;pointer-events:none;transition:opacity .25s}
+@media (hover:hover){.wa-fab:hover .wa-tip{opacity:1}}
+.wa.open .wa-tip{display:none}
+.wa-card{width:min(340px,calc(100vw - 32px));border-radius:20px;overflow:hidden;background:var(--card-solid);border:1px solid var(--edge);box-shadow:0 30px 70px -20px rgba(0,0,0,.6);transform-origin:bottom right;animation:waIn .35s var(--ease)}
+[dir="rtl"] .wa-card{transform-origin:bottom left}
+.wa-card[hidden]{display:none}
+@keyframes waIn{from{opacity:0;transform:translateY(12px) scale(.96)}}
+.wa-head{display:flex;align-items:center;gap:12px;padding:16px 16px 16px 18px;background:#075E54;color:#fff}
+.wa-av{position:relative;width:44px;height:44px;flex:none;border-radius:50%;background:#fff;display:grid;place-items:center}
+.wa-av img{width:26px;height:26px}
+.wa-av::after{content:"";position:absolute;right:1px;bottom:1px;width:11px;height:11px;border-radius:50%;background:#25D366;box-shadow:0 0 0 2px #075E54}
+[dir="rtl"] .wa-av::after{right:auto;left:1px}
+.wa-head b{display:block;font-family:var(--f-display);font-weight:600;font-size:1.02rem;letter-spacing:-.01em;line-height:1.2}
+.wa-head small{display:block;font-size:.8rem;opacity:.82;line-height:1.3;margin-top:2px}
+.wa-close{margin-inline-start:auto;width:34px;height:34px;flex:none;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff;font-size:1.3rem;line-height:1;cursor:pointer}
+.wa-close:hover{background:rgba(255,255,255,.22)}
+.wa-body{padding:20px 18px 18px;background-color:var(--bg);background-image:radial-gradient(rgba(var(--dot),.06) 1px,transparent 1px);background-size:14px 14px}
+.wa-msg{position:relative;max-width:88%;background:var(--card-solid);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:11px 14px 9px;font-size:.94rem;line-height:1.5;color:var(--text)}
+[dir="rtl"] .wa-msg{border-radius:14px 4px 14px 14px}
+.wa-msg time{display:block;text-align:end;font-size:.72rem;color:var(--muted);margin-top:4px}
+.wa-go{margin:16px 0 0;width:100%;justify-content:center;background:#25D366;color:#05271A;font-weight:700;border:0}
+.wa-go:hover{background:#2FE074;box-shadow:0 10px 30px -10px rgba(37,211,102,.7)}
+.wa-go svg{width:18px;height:18px}
+.wa-note{margin-top:10px;text-align:center;font-size:.76rem;color:var(--muted)}
+.menu-open .wa,.lb-open .wa{opacity:0;pointer-events:none;visibility:hidden}
+@media (max-width:560px){.wa{bottom:calc(16px + env(safe-area-inset-bottom,0px));inset-inline-end:16px}.wa-fab{width:54px;height:54px}.wa-fab svg{width:28px;height:28px}}
+@media (prefers-reduced-motion:reduce){.wa-fab::before{animation:none;opacity:0}.wa-card{animation:none}}
+@media print{.wa{display:none}}
+/* brand icon never mirrors or slides, in any language */
+.wa svg,.wa-go:hover svg,[dir="rtl"] .wa svg,[dir="rtl"] .soc svg,[dir="rtl"] .soc-i svg,[dir="rtl"] .wa .wa-go:hover svg{transform:none}
+.wa.open .wa-fab svg{transform:rotate(90deg) scale(.6)}
 </style>
 </head>
 <body>
@@ -1128,7 +1172,7 @@ body{transition:background-color .4s ease,color .4s ease}
           <li><small data-ar="اتصال أو واتساب">Call or WhatsApp</small><strong><a dir="ltr" href="tel:+919037811776">+91 90378 11776</a></strong></li>
           <li><small data-ar="البريد الإلكتروني">Email</small><strong><a dir="ltr" href="mailto:info@beezysolutions.com">info@beezysolutions.com</a></strong></li>
         </ul>
-                <div class="socials" aria-label="Social media"><a class="soc" href="https://www.instagram.com/beezysolutions/" target="_blank" rel="noopener" aria-label="Beezy Solutions on Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1" fill="currentColor" stroke="none"/></svg><span data-ar="إنستغرام">Instagram</span></a><a class="soc" href="https://www.facebook.com/people/Beezy-Solutions/61561675851463/" target="_blank" rel="noopener" aria-label="Beezy Solutions on Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H8v3h2.5V21z"/></svg><span data-ar="فيسبوك">Facebook</span></a><a class="soc" href="https://www.linkedin.com/in/beezy-solutions-161a14363" target="_blank" rel="noopener" aria-label="Beezy Solutions on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 8.5h3V19H5zM6.5 4a1.75 1.75 0 1 1 0 3.5 1.75 1.75 0 0 1 0-3.5zM10 8.5h2.9v1.4h.1c.4-.8 1.4-1.7 3-1.7 3.1 0 3.7 2 3.7 4.7V19h-3v-5.4c0-1.3 0-2.9-1.8-2.9s-2 1.4-2 2.8V19h-3z"/></svg><span data-ar="لينكدإن">LinkedIn</span></a><a class="soc" href="https://www.youtube.com/@beezysolutions" target="_blank" rel="noopener" aria-label="Beezy Solutions on YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.6 7.2a2.6 2.6 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.6 2.6 0 0 0 2.4 7.2 27 27 0 0 0 2 12a27 27 0 0 0 .4 4.8 2.6 2.6 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.6 2.6 0 0 0 1.8-1.8A27 27 0 0 0 22 12a27 27 0 0 0-.4-4.8zM10 15V9l5.2 3z"/></svg><span data-ar="يوتيوب">YouTube</span></a></div>
+                <div class="socials" aria-label="Social media"><a class="soc" href="https://wa.me/919037811776" target="_blank" rel="noopener" aria-label="Chat with Beezy Solutions on WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg><span data-ar="واتساب">WhatsApp</span></a><a class="soc" href="https://www.instagram.com/beezysolutions/" target="_blank" rel="noopener" aria-label="Beezy Solutions on Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1" fill="currentColor" stroke="none"/></svg><span data-ar="إنستغرام">Instagram</span></a><a class="soc" href="https://www.facebook.com/people/Beezy-Solutions/61561675851463/" target="_blank" rel="noopener" aria-label="Beezy Solutions on Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H8v3h2.5V21z"/></svg><span data-ar="فيسبوك">Facebook</span></a><a class="soc" href="https://www.linkedin.com/in/beezy-solutions-161a14363" target="_blank" rel="noopener" aria-label="Beezy Solutions on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 8.5h3V19H5zM6.5 4a1.75 1.75 0 1 1 0 3.5 1.75 1.75 0 0 1 0-3.5zM10 8.5h2.9v1.4h.1c.4-.8 1.4-1.7 3-1.7 3.1 0 3.7 2 3.7 4.7V19h-3v-5.4c0-1.3 0-2.9-1.8-2.9s-2 1.4-2 2.8V19h-3z"/></svg><span data-ar="لينكدإن">LinkedIn</span></a><a class="soc" href="https://www.youtube.com/@beezysolutions" target="_blank" rel="noopener" aria-label="Beezy Solutions on YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.6 7.2a2.6 2.6 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.6 2.6 0 0 0 2.4 7.2 27 27 0 0 0 2 12a27 27 0 0 0 .4 4.8 2.6 2.6 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.6 2.6 0 0 0 1.8-1.8A27 27 0 0 0 22 12a27 27 0 0 0-.4-4.8zM10 15V9l5.2 3z"/></svg><span data-ar="يوتيوب">YouTube</span></a></div>
       </div>
       <form id="enquiry" novalidate>
         <div class="field"><label for="f-name" data-ar="الاسم الكامل">Full name</label><input id="f-name" name="name" autocomplete="name" required><span class="err" data-ar="يرجى إدخال اسمك.">Please enter your name.</span></div>
@@ -1153,7 +1197,7 @@ body{transition:background-color .4s ease,color .4s ease}
       <div>
         <svg viewBox="0 0 790 240" role="img" aria-label="Beezy Solutions"><use href="#beezy-logo"/></svg>
         <p class="about" data-ar="بيزي سوليوشنز وكالة متخصّصة في الهوية التجارية وتطوير المواقع والتسويق الرقمي. نبني الهويات التجارية والمواقع الإلكترونية وأنظمة CRM والمبيعات، والتسويق الذي ينمّيها، لأكثر من 350 علامة تجارية في أكثر من 20 قطاعًا.">Beezy Solutions is a branding, website development and digital marketing agency. We build brand identities, websites, CRM and sales systems, and the marketing that grows them, for 350+ brands across 20+ industries.</p>
-        <div class="foot-social" aria-label="Follow Beezy Solutions"><a class="soc-i" href="https://www.instagram.com/beezysolutions/" target="_blank" rel="noopener" aria-label="Beezy Solutions on Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1" fill="currentColor" stroke="none"/></svg></a><a class="soc-i" href="https://www.facebook.com/people/Beezy-Solutions/61561675851463/" target="_blank" rel="noopener" aria-label="Beezy Solutions on Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H8v3h2.5V21z"/></svg></a><a class="soc-i" href="https://www.linkedin.com/in/beezy-solutions-161a14363" target="_blank" rel="noopener" aria-label="Beezy Solutions on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 8.5h3V19H5zM6.5 4a1.75 1.75 0 1 1 0 3.5 1.75 1.75 0 0 1 0-3.5zM10 8.5h2.9v1.4h.1c.4-.8 1.4-1.7 3-1.7 3.1 0 3.7 2 3.7 4.7V19h-3v-5.4c0-1.3 0-2.9-1.8-2.9s-2 1.4-2 2.8V19h-3z"/></svg></a><a class="soc-i" href="https://www.youtube.com/@beezysolutions" target="_blank" rel="noopener" aria-label="Beezy Solutions on YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.6 7.2a2.6 2.6 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.6 2.6 0 0 0 2.4 7.2 27 27 0 0 0 2 12a27 27 0 0 0 .4 4.8 2.6 2.6 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.6 2.6 0 0 0 1.8-1.8A27 27 0 0 0 22 12a27 27 0 0 0-.4-4.8zM10 15V9l5.2 3z"/></svg></a></div>
+        <div class="foot-social" aria-label="Follow Beezy Solutions"><a class="soc-i" href="https://wa.me/919037811776" target="_blank" rel="noopener" aria-label="Chat with Beezy Solutions on WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></a><a class="soc-i" href="https://www.instagram.com/beezysolutions/" target="_blank" rel="noopener" aria-label="Beezy Solutions on Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1" fill="currentColor" stroke="none"/></svg></a><a class="soc-i" href="https://www.facebook.com/people/Beezy-Solutions/61561675851463/" target="_blank" rel="noopener" aria-label="Beezy Solutions on Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H8v3h2.5V21z"/></svg></a><a class="soc-i" href="https://www.linkedin.com/in/beezy-solutions-161a14363" target="_blank" rel="noopener" aria-label="Beezy Solutions on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 8.5h3V19H5zM6.5 4a1.75 1.75 0 1 1 0 3.5 1.75 1.75 0 0 1 0-3.5zM10 8.5h2.9v1.4h.1c.4-.8 1.4-1.7 3-1.7 3.1 0 3.7 2 3.7 4.7V19h-3v-5.4c0-1.3 0-2.9-1.8-2.9s-2 1.4-2 2.8V19h-3z"/></svg></a><a class="soc-i" href="https://www.youtube.com/@beezysolutions" target="_blank" rel="noopener" aria-label="Beezy Solutions on YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.6 7.2a2.6 2.6 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.6 2.6 0 0 0 2.4 7.2 27 27 0 0 0 2 12a27 27 0 0 0 .4 4.8 2.6 2.6 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.6 2.6 0 0 0 1.8-1.8A27 27 0 0 0 22 12a27 27 0 0 0-.4-4.8zM10 15V9l5.2 3z"/></svg></a></div>
       </div>
       <div><h4 data-ar="استكشف">Explore</h4><ul><li><a href="#work" data-ar="أعمالنا">Work</a></li><li><a href="#clients" data-ar="عملاؤنا">Clients</a></li><li><a href="#services" data-ar="خدماتنا">Services</a></li><li><a href="#approach" data-ar="منهجنا">Approach</a></li></ul></div>
       <div><h4 data-ar="تواصل معنا">Contact</h4><ul><li><a dir="ltr" href="tel:+919037811776">+91 90378 11776</a></li><li><a dir="ltr" href="mailto:info@beezysolutions.com">info@beezysolutions.com</a></li></ul></div>
@@ -1163,6 +1207,24 @@ body{transition:background-color .4s ease,color .4s ease}
     <div class="foot-base"><span data-ar="© &lt;span id=&quot;yr&quot;&gt;2026&lt;/span&gt; بيزي سوليوشنز. جميع الحقوق محفوظة.">© <span id="yr">2026</span> Beezy Solutions. All rights reserved.</span><span data-ar="حيث تُبنى العلامات التجارية لتحقق النتائج.">Where brands are built to perform.</span></div>
   </div>
 </footer>
+
+<!-- WhatsApp chat widget -->
+<div class="wa" id="wa">
+  <div class="wa-card" id="waCard" role="dialog" aria-modal="false" aria-labelledby="waTitle" hidden>
+    <div class="wa-head">
+      <span class="wa-av"><img src="favicon.svg?v=2" alt="" width="26" height="26"></span>
+      <div><b id="waTitle">Beezy Solutions</b><small data-ar="نرد عادةً خلال يوم عمل واحد">Usually replies within one working day</small></div>
+      <button type="button" class="wa-close" id="waClose" aria-label="Close chat" data-ar-label="إغلاق المحادثة">&times;</button>
+    </div>
+    <div class="wa-body">
+      <p class="wa-msg"><span data-ar="مرحبًا 👋&lt;br&gt;كيف يمكننا مساعدة عملك على النمو؟ راسلنا على واتساب وسنعود إليك.">Hi there 👋<br>How can we help your business grow? Message us on WhatsApp and we’ll get back to you.</span><time>Beezy</time></p>
+      <a class="btn wa-go" id="waGo" href="https://wa.me/919037811776" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg><span data-ar="ابدأ المحادثة">Start chat</span></a>
+      <p class="wa-note" dir="ltr">+91 90378 11776</p>
+    </div>
+  </div>
+  <button type="button" class="wa-fab" id="waFab" aria-label="Chat with us on WhatsApp" data-ar-label="تحدث معنا على واتساب" aria-expanded="false" aria-controls="waCard"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg><span class="x" aria-hidden="true">&times;</span><span class="wa-tip" data-ar="تحدث معنا">Chat with us</span></button>
+</div>
+
 
 <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image preview" hidden>
   <button type="button" class="lb-close" id="lbClose" aria-label="Close preview">×</button>
@@ -1443,6 +1505,30 @@ body{transition:background-color .4s ease,color .4s ease}
   if('IntersectionObserver' in W)new IntersectionObserver(function(es){visible=es[0].isIntersecting},{rootMargin:'200px'}).observe(track);
   var rt;W.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(build,150)});
   build();requestAnimationFrame(frame);
+})();
+</script>
+<script>
+/* WhatsApp chat widget */
+(function(){
+  var d=document,root=d.documentElement,wa=d.getElementById('wa');if(!wa)return;
+  var fab=d.getElementById('waFab'),card=d.getElementById('waCard'),close=d.getElementById('waClose'),go=d.getElementById('waGo');
+  var NUM='919037811776';
+  var MSG={en:"Hi Beezy Solutions, I'm interested in your services. Can we talk?",ar:"مرحبًا Beezy Solutions، أنا مهتم بخدماتكم. هل يمكننا التحدث؟"};
+  function ar(){return root.lang==='ar'}
+  function link(){return 'https://wa.me/'+NUM+'?text='+encodeURIComponent(ar()?MSG.ar:MSG.en)}
+  function labels(){[fab,close].forEach(function(b){if(!b.dataset.enLabel)b.dataset.enLabel=b.getAttribute('aria-label');b.setAttribute('aria-label',ar()?b.dataset.arLabel:b.dataset.enLabel)})}
+  function open(){card.hidden=false;wa.classList.add('open');fab.setAttribute('aria-expanded','true');go.href=link();setTimeout(function(){go.focus()},60)}
+  function shut(focus){card.hidden=true;wa.classList.remove('open');fab.setAttribute('aria-expanded','false');if(focus)fab.focus()}
+  fab.addEventListener('click',function(){card.hidden?open():shut(false)});
+  close.addEventListener('click',function(){shut(true)});
+  go.addEventListener('click',function(){go.href=link();setTimeout(function(){shut(false)},300)});
+  d.addEventListener('keydown',function(e){if(e.key==='Escape'&&!card.hidden)shut(true)});
+  d.addEventListener('click',function(e){if(!card.hidden&&!wa.contains(e.target))shut(false)});
+  /* keep labels and the pre-filled message in sync with the language switch */
+  new MutationObserver(function(){labels();if(!card.hidden)go.href=link()}).observe(root,{attributes:true,attributeFilter:['lang']});
+  /* hide while an image is open in the lightbox */
+  var lb=d.querySelector('.lightbox');if(lb)new MutationObserver(function(){root.classList.toggle('lb-open',!lb.hidden)}).observe(lb,{attributes:true,attributeFilter:['hidden']});
+  labels();
 })();
 </script>
 </body>
