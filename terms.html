@@ -682,15 +682,18 @@ body{transition:background-color .4s ease,color .4s ease}
 [dir="rtl"] .wa-card{transform-origin:bottom left}
 .wa-card[hidden]{display:none}
 @keyframes waIn{from{opacity:0;transform:translateY(12px) scale(.96)}}
-.wa-head{display:flex;align-items:center;gap:12px;padding:16px 16px 16px 18px;background:#075E54;color:#fff}
-.wa-av{position:relative;width:44px;height:44px;flex:none;border-radius:50%;background:#fff;display:grid;place-items:center}
-.wa-av img{width:26px;height:26px}
-.wa-av::after{content:"";position:absolute;right:1px;bottom:1px;width:11px;height:11px;border-radius:50%;background:#25D366;box-shadow:0 0 0 2px #075E54}
-[dir="rtl"] .wa-av::after{right:auto;left:1px}
-.wa-head b{display:block;font-family:var(--f-display);font-weight:600;font-size:1.02rem;letter-spacing:-.01em;line-height:1.2}
-.wa-head small{display:block;font-size:.8rem;opacity:.82;line-height:1.3;margin-top:2px}
-.wa-close{margin-inline-start:auto;width:34px;height:34px;flex:none;border-radius:50%;border:0;background:rgba(255,255,255,.12);color:#fff;font-size:1.3rem;line-height:1;cursor:pointer}
-.wa-close:hover{background:rgba(255,255,255,.22)}
+.wa-head{position:relative;display:flex;align-items:center;gap:14px;padding:18px 16px 18px 18px;color:#fff;background:linear-gradient(135deg,#05A877 0%,#04855F 55%,#0B5E4A 100%);overflow:hidden;isolation:isolate}
+.wa-head::before{content:"";position:absolute;inset:0;z-index:-1;background-image:radial-gradient(rgba(255,255,255,.14) 1px,transparent 1px);background-size:12px 12px;-webkit-mask-image:linear-gradient(100deg,transparent 35%,#000);mask-image:linear-gradient(100deg,transparent 35%,#000)}
+.wa-av{position:relative;width:52px;height:52px;flex:none;border-radius:50%;background:#000;display:grid;place-items:center;box-shadow:0 0 0 3px rgba(255,255,255,.22),0 8px 18px -6px rgba(0,0,0,.5)}
+.wa-av svg{width:30px;height:30px;display:block}
+.wa-av::after{content:"";position:absolute;right:0;bottom:1px;width:13px;height:13px;border-radius:50%;background:#25D366;box-shadow:0 0 0 2.5px #04855F}
+[dir="rtl"] .wa-av::after{right:auto;left:0}
+.wa-id{min-width:0}
+.wa-head b{display:flex;align-items:center;gap:6px;font-family:var(--f-display);font-weight:600;font-size:1.12rem;letter-spacing:-.02em;line-height:1.15}
+.wa-head small{display:flex;white-space:nowrap;align-items:center;gap:6px;margin-top:5px;font-size:.78rem;font-weight:500;color:rgba(255,255,255,.88);line-height:1.25}
+.wa-head small svg{width:13px;height:13px;flex:none}
+.wa-close{align-self:flex-start;margin-inline-start:auto;width:32px;height:32px;flex:none;border-radius:50%;border:0;background:rgba(0,0,0,.18);color:#fff;font-size:1.25rem;line-height:1;cursor:pointer;transition:background-color .2s}
+.wa-close:hover{background:rgba(0,0,0,.32)}
 .wa-body{padding:20px 18px 18px;background-color:var(--bg);background-image:radial-gradient(rgba(var(--dot),.06) 1px,transparent 1px);background-size:14px 14px}
 .wa-msg{position:relative;max-width:88%;background:var(--card-solid);border:1px solid var(--line);border-radius:4px 14px 14px 14px;padding:11px 14px 9px;font-size:.94rem;line-height:1.5;color:var(--text)}
 [dir="rtl"] .wa-msg{border-radius:14px 4px 14px 14px}
@@ -779,8 +782,8 @@ body{transition:background-color .4s ease,color .4s ease}
 <div class="wa" id="wa">
   <div class="wa-card" id="waCard" role="dialog" aria-modal="false" aria-labelledby="waTitle" hidden>
     <div class="wa-head">
-      <span class="wa-av"><img src="favicon.svg?v=2" alt="" width="26" height="26"></span>
-      <div><b id="waTitle">Beezy Solutions</b><small data-ar="نرد عادةً خلال يوم عمل واحد">Usually replies within one working day</small></div>
+      <span class="wa-av" aria-hidden="true"><svg viewBox="-4.03 11.72 217.4 217.4"><use href="#beezy-logo" width="790" height="240"/></svg></span>
+      <div class="wa-id"><b id="waTitle">Beezy Solutions</b><small><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg><span data-ar="نرد خلال يوم عمل واحد">Replies in 1 working day</span></small></div>
       <button type="button" class="wa-close" id="waClose" aria-label="Close chat" data-ar-label="إغلاق المحادثة">&times;</button>
     </div>
     <div class="wa-body">
