@@ -361,7 +361,7 @@ section{position:relative}
 .floor{position:absolute;left:-50%;right:-50%;bottom:0;height:46%;z-index:-1;perspective:700px;-webkit-mask-image:linear-gradient(to top,#000 5%,transparent 80%);mask-image:linear-gradient(to top,#000 5%,transparent 80%);pointer-events:none}
 .floor i{position:absolute;inset:-120px 0 0 0;transform-origin:50% 100%;transform:rotateX(64deg);background-image:linear-gradient(rgba(44,199,149,.2) 1px,transparent 1px),linear-gradient(90deg,rgba(44,199,149,.2) 1px,transparent 1px);background-size:64px 64px}
 .floor i b{display:block;position:absolute;inset:0;background:inherit;background-size:inherit;will-change:transform;transform:translate3d(0,var(--fy,0px),0)}
-.hero-grid{will-change:transform,opacity}
+.hero-grid > div:first-child{will-change:transform,opacity}
 .hero h1 .kicker{display:inline-flex;align-items:center;gap:12px;font-family:var(--f-label);font-weight:600;font-size:clamp(.76rem,1vw,.86rem);letter-spacing:.24em;text-transform:uppercase;color:var(--text2);margin-bottom:28px;padding:9px 16px 9px 12px;border:1px solid var(--line);border-radius:999px;background:var(--glass);line-height:1.3}
 .hero h1 .kicker::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--lime);box-shadow:0 0 12px var(--lime);animation:pulse 2.4s ease-in-out infinite}
 @keyframes pulse{50%{opacity:.35}}
@@ -1341,15 +1341,15 @@ body{transition:background-color .4s ease,color .4s ease}
   splitStatement();
 
   /* ---------- one scroll loop for every scroll-driven effect ---------- */
-  var heroInner=d.getElementById('heroInner'), floorB=d.querySelector('.floor b'), ticking=false;
+  var heroInner=d.getElementById('heroInner'), heroCopy=heroInner.firstElementChild, floorB=d.querySelector('.floor b'), ticking=false;
   var cases=[].slice.call(d.querySelectorAll('.case')), reel=d.getElementById('reel'), r1=d.getElementById('r1'), r2=d.getElementById('r2');
   function onScroll(){
     var y=W.scrollY, vh=W.innerHeight;
     nav.classList.toggle('scrolled',y>12);
     if(!reduce){
       var hp=clamp(y/(vh*0.9),0,1);
-      heroInner.style.transform='translate3d(0,'+(hp*-60).toFixed(1)+'px,0)';
-      heroInner.style.opacity=(1-hp*1.1).toFixed(3);
+      heroCopy.style.transform='translate3d(0,'+(hp*-60).toFixed(1)+'px,0)';   /* only the headline drifts and fades; */
+      heroCopy.style.opacity=(1-hp*1.1).toFixed(3);                         /* the brands / reviews strip stays fully visible */
       floorB.style.setProperty('--fy',((y*0.6)%64).toFixed(1)+'px');
     }
     var r=st.getBoundingClientRect(), sp=clamp((vh*0.82-r.top)/(r.height+vh*0.35),0,1), n=Math.round(sp*words.length);
