@@ -663,7 +663,7 @@ footer{border-top:1px solid var(--line);padding:64px 0 40px;background:var(--bg)
 .js .pre{opacity:0;transform:translateY(34px);filter:blur(6px)}
 
 /* touch screens: the hover effects play on their own as things scroll into view */
-.glow.amb{width:460px;height:460px;margin:-230px 0 0 -230px;background:radial-gradient(circle,rgba(44,199,149,.2),rgba(44,199,149,.06) 42%,transparent 68%)}
+.glow.amb{width:480px;height:480px;margin:-240px 0 0 -240px;background:radial-gradient(circle,rgba(44,199,149,.26),rgba(44,199,149,.08) 42%,transparent 68%)}
 .pillar.lit{border-color:rgba(44,199,149,.4)}
 .pillar.lit::before{opacity:1}
 .flag.lit{border-color:rgba(44,199,149,.45);transform:translateY(-3px);box-shadow:0 14px 30px -18px rgba(4,161,116,.7)}
@@ -739,10 +739,23 @@ footer{border-top:1px solid var(--line);padding:64px 0 40px;background:var(--bg)
   .qa p{padding-right:0}
   .foot{grid-template-columns:1fr}
 }
+/* Reduced motion: calmer, not frozen. Many Android phones switch this setting on
+   automatically in battery-saver mode, so switching every animation off left those
+   visitors with a dead page. Big movements (sliding, blurring, parallax, scaling)
+   are dropped; gentle fades, colour changes and slow drifts stay. */
 @media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation-duration:.001ms!important;animation-delay:0s!important;transition-duration:.001ms!important;transition-delay:0s!important}
-  .marquee,.row{animation:none}
+  .reveal{transition:opacity .9s var(--ease)}
+  .js .pre{transform:none;filter:none}
+  .in{animation-name:fadeIn}
+  .js .rot .ln,.js .rot .ln.out{transform:none;filter:none}
+  .badge svg{animation-duration:45s}
+  .ticker-track{animation-duration:90s}
+  .marquee{animation-duration:110s}
+  .row{animation:none}
+  .lightbox img{animation:fade .35s ease}
+  .svc[open] .svc-body,.qa[open] p{animation:fade .4s ease}
 }
+@keyframes fadeIn{from{opacity:0}}
 
 /* header tools: language + theme */
 .tools{display:flex;align-items:center;gap:8px;margin-inline-start:22px}
@@ -1278,7 +1291,7 @@ body{transition:background-color .4s ease,color .4s ease}
 (function(){
   var d=document, root=d.documentElement, W=window;
   var reduce=W.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var finePointer=W.matchMedia('(pointer:fine)').matches;
+  var finePointer=W.matchMedia('(hover:hover) and (pointer:fine)').matches;   /* a real mouse / trackpad */
   root.classList.add('js');
   var I18N=[].slice.call(d.querySelectorAll('[data-ar]'));
   I18N.forEach(function(el){ el.setAttribute('data-en',el.innerHTML); });
@@ -1307,7 +1320,7 @@ body{transition:background-color .4s ease,color .4s ease}
   readDot();
   function paint(){
     ctx.clearRect(0,0,VW,VH);
-    var R=VW<700?140:180, active=false;
+    var R=VW<700?140:180, BASE=VW<700?.15:.075, active=false;
     for(var i=0;i<dots.length;i++){
       var p=dots[i], dx=p.x-mx, dy=p.y-my, dist=Math.sqrt(dx*dx+dy*dy);
       var t=dist<R?1-dist/R:0; p.v+=(t-p.v)*0.16; if(p.v>0.01) active=true;
@@ -1317,7 +1330,7 @@ body{transition:background-color .4s ease,color .4s ease}
         ctx.fillStyle='rgba(44,199,149,'+(0.2+v*0.75).toFixed(3)+')';
         ctx.beginPath(); ctx.arc(p.x+ox,p.y+oy,1+v*1.7,0,6.283); ctx.fill();
       } else {
-        ctx.fillStyle='rgba('+DOT+',0.075)'; ctx.fillRect(p.x-.75,p.y-.75,1.5,1.5);
+        ctx.fillStyle='rgba('+DOT+','+BASE+')'; ctx.fillRect(p.x-.75,p.y-.75,1.5,1.5);
       }
     }
     return active;
@@ -1330,14 +1343,14 @@ body{transition:background-color .4s ease,color .4s ease}
   }
   build();
   var rt; W.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){build();},150)});
-  if(finePointer && !reduce){
+  if(finePointer){
     W.addEventListener('pointermove',function(e){
       mx=e.clientX; my=e.clientY; lastMove=performance.now();
       if(gx<-900){gx=mx;gy=my}
       if(!running){running=true;requestAnimationFrame(loop)}
     },{passive:true});
     d.addEventListener('pointerleave',function(){mx=my=-9999});
-  } else if(!reduce){
+  } else {
     /* touch screens: no cursor, so the glow and dot ripple drift on their own
        and jump to your finger whenever you touch the screen */
     glow.classList.add('amb');
@@ -1350,7 +1363,7 @@ body{transition:background-color .4s ease,color .4s ease}
       requestAnimationFrame(amb);
       if(ts-lastPaint<30) return;                       /* ~30 fps is plenty for a background, and kinder to the battery */
       lastPaint=ts;
-      var s=(ts-t0)/1000, touching=ts-touchT<1600;
+      var s=(ts-t0)/1000*(reduce?.5:1), touching=ts-touchT<1600;
       var ax=VW*(.5+.36*Math.sin(s*.33)), ay=VH*(.4+.28*Math.sin(s*.21+1.2));
       var X=touching?tx:ax, Y=touching?ty:ay, k=touching?.35:.06;
       if(fx<-900){ fx=X; fy=Y; }
@@ -1363,7 +1376,7 @@ body{transition:background-color .4s ease,color .4s ease}
     function startAmb(){ if(!ambOn && !d.hidden){ ambOn=true; requestAnimationFrame(amb); } }
     d.addEventListener('visibilitychange',startAmb);
     startAmb();
-  } else { glow.style.display='none'; }
+  }
 
   /* magnetic primary buttons */
   if(finePointer && !reduce){
@@ -1377,7 +1390,7 @@ body{transition:background-color .4s ease,color .4s ease}
   }
 
   /* pillars on touch: tapping moves the spotlight to your finger */
-  if(!finePointer && !reduce){
+  if(!finePointer){
     d.querySelectorAll('.pillar').forEach(function(c){
       c.addEventListener('pointerdown',function(e){var r=c.getBoundingClientRect();c.style.setProperty('--px',(e.clientX-r.left)+'px');c.style.setProperty('--py',(e.clientY-r.top)+'px');c.dataset.tap=Date.now()});
     });
@@ -1420,19 +1433,23 @@ body{transition:background-color .4s ease,color .4s ease}
         var a=cases[c].getBoundingClientRect(), b=cases[c+1].getBoundingClientRect(), ov=clamp((a.bottom-b.top)/a.height,0,1);
         cases[c].style.setProperty('--s',(1-ov*.06).toFixed(4)); cases[c].style.setProperty('--dim',(ov*.55).toFixed(3));
       }
-    } else if(!reduce){
+    } else if(W.innerWidth<=900 && !reduce){
       /* phones / tablets: each project card grows into place as it scrolls in, and its picture drifts slower than the page */
       for(var m=0;m<cases.length;m++){
         var cr=cases[m].getBoundingClientRect();
         if(cr.bottom<-40 || cr.top>vh+40) continue;
         var e=clamp((vh-cr.top)/(vh*.55),0,1); e=1-Math.pow(1-e,3);
-        cases[m].style.setProperty('--ms',(.9+e*.1).toFixed(4));
         cases[m].style.setProperty('--mo',(.35+e*.65).toFixed(3));
+        if(reduce) continue;
+        cases[m].style.setProperty('--ms',(.9+e*.1).toFixed(4));
         var img=cases[m].querySelector('.case-media'), ir=img.getBoundingClientRect();
         cases[m].style.setProperty('--iy',(((ir.top+ir.height/2)-vh/2)*-.09).toFixed(1)+'px');
       }
+    } else if(W.innerWidth<=900){
+      for(var m2=0;m2<cases.length;m2++){ var cr2=cases[m2].getBoundingClientRect(); if(cr2.bottom<-40||cr2.top>vh+40) continue;
+        var e2=clamp((vh-cr2.top)/(vh*.55),0,1); cases[m2].style.setProperty('--mo',(.35+e2*.65).toFixed(3)); }
     }
-    if(!finePointer && !reduce){
+    if(!finePointer){
       /* pillars on touch: the card nearest the middle of the screen lights up, its spotlight sweeping down as you scroll */
       for(var q=0;q<pillars.length;q++){
         var pr=pillars[q].getBoundingClientRect(), mid=(pr.top+pr.height/2)/vh, on=mid>.18 && mid<.78;
@@ -1491,12 +1508,12 @@ body{transition:background-color .4s ease,color .4s ease}
     }
     function start(){ clearInterval(timer); timer=setInterval(function(){ show((i+1)%lines.length); },DUR); }
     dots.forEach(function(b,k){ b.addEventListener('click',function(){ show(k); start(); }); });
-    if(!reduce){ start(); } else { d.getElementById('rotDots').style.display='none'; }
+    start();
   })();
 
   /* ---------- logos: on touch screens, light them up one by one ---------- */
   var tiles=[].slice.call(d.querySelectorAll('.logo:not(.more)'));
-  if(!finePointer && !reduce && 'IntersectionObserver' in W){
+  if(!finePointer && 'IntersectionObserver' in W){
     var li=0, timer=null;
     new IntersectionObserver(function(es){ es.forEach(function(e){
       if(e.isIntersecting && !timer){ timer=setInterval(function(){ tiles.forEach(function(t){t.classList.remove('lit')}); tiles[li%tiles.length].classList.add('lit'); li++; },1400); }
@@ -1505,7 +1522,7 @@ body{transition:background-color .4s ease,color .4s ease}
   }
 
   var flagEls=[].slice.call(d.querySelectorAll('.flag-row .flag')), flagRow=d.querySelector('.flag-row');
-  if(!finePointer && !reduce && flagEls.length && flagRow && 'IntersectionObserver' in W){
+  if(!finePointer && flagEls.length && flagRow && 'IntersectionObserver' in W){
     var fi=0, ftimer=null;
     new IntersectionObserver(function(es){ es.forEach(function(e){
       if(e.isIntersecting && !ftimer){ ftimer=setInterval(function(){ flagEls.forEach(function(t){t.classList.remove('lit')}); flagEls[fi%flagEls.length].classList.add('lit'); fi++; },1100); }
@@ -1521,7 +1538,7 @@ body{transition:background-color .4s ease,color .4s ease}
     requestAnimationFrame(f);
   }
   var items=[].slice.call(d.querySelectorAll('[data-reveal]'));
-  if('IntersectionObserver' in W && !reduce){
+  if('IntersectionObserver' in W){
     var vh=W.innerHeight;
     items.forEach(function(el){ el.classList.add('reveal'); if(el.getBoundingClientRect().top>vh*0.92) el.classList.add('pre'); });
     var io=new IntersectionObserver(function(es){ es.forEach(function(en){
@@ -1559,7 +1576,7 @@ body{transition:background-color .4s ease,color .4s ease}
       var dt=last?Math.min((t-last)/1000,.05):0; last=t;
       hover+=(hoverTarget-hover)*Math.min(1,dt*5);
       rows.forEach(function(r){
-        r.x+=(rm.matches?0:r.dir*r.speed*hover)*dt;
+        r.x+=r.dir*r.speed*(rm.matches?.5:1)*hover*dt;
         wrap(r); paint(r);
       });
       raf=requestAnimationFrame(frame);
@@ -1651,7 +1668,7 @@ body{transition:background-color .4s ease,color .4s ease}
   var track=document.getElementById('rvTrack'),rail=document.getElementById('rvRail');
   if(!track||!rail)return;
   var W=window,reduce=W.matchMedia('(prefers-reduced-motion: reduce)').matches,fine=W.matchMedia('(hover:hover) and (pointer:fine)').matches;
-  var orig=[].slice.call(rail.children),n=orig.length,setW=0,items=[],pos=0,vel=0,speed=reduce?0:34,cur=speed,hover=false,drag=false,lastX=0,lastT=0,nudge=0,visible=true,last=performance.now(),gap=20;
+  var orig=[].slice.call(rail.children),n=orig.length,setW=0,items=[],pos=0,vel=0,speed=reduce?16:34,cur=speed,hover=false,drag=false,lastX=0,lastT=0,nudge=0,visible=true,last=performance.now(),gap=20;
   function build(){
     [].slice.call(rail.querySelectorAll('.clone')).forEach(function(c){c.remove()});
     gap=parseFloat(getComputedStyle(rail).columnGap)||20;
