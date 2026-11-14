@@ -464,6 +464,10 @@ section{position:relative}
 .r1{margin-top:44px;animation:reelL 32s linear infinite}
 .r2{margin-top:16px;animation:reelR 27s linear infinite}
 .reel:hover .row{animation-play-state:paused}
+.reel.live .row{animation:none;cursor:grab;touch-action:pan-y;-webkit-user-select:none;user-select:none}
+.reel.live .row.dragging{cursor:grabbing}
+.reel.live .row.dragging .poster,.reel.live .row.dragging .grid{pointer-events:none}
+.reel.live .row img{-webkit-user-drag:none;user-drag:none}
 @keyframes reelL{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
 @keyframes reelR{from{transform:translate3d(-50%,0,0)}to{transform:translate3d(0,0,0)}}
 .poster,.grid{border:0;padding:0;border-radius:18px;overflow:hidden;background:var(--card-solid);cursor:zoom-in;flex:none;transition:transform .6s var(--ease),box-shadow .6s}
@@ -1436,6 +1440,115 @@ body{transition:background-color .4s ease,color .4s ease}
     }); },{rootMargin:'0px 0px -8% 0px',threshold:.1});
     items.forEach(function(el){io.observe(el)});
   }
+
+  /* ---------- social reel: always moving, draggable, never freezes on touch ---------- */
+  (function(){
+    var reel=d.getElementById('reel'); if(!reel || !W.requestAnimationFrame) return;
+    var rm=W.matchMedia?W.matchMedia('(prefers-reduced-motion: reduce)'):{matches:false};
+    var rows=[[d.getElementById('r1'),-1,32],[d.getElementById('r2'),1,27]].filter(function(r){return r[0]}).map(function(r){
+      return {el:r[0],dir:r[1],dur:r[2],x:0,v:0,half:0,speed:0,drag:null,vel:0,justDragged:false};
+    });
+    if(!rows.length) return;
+    reel.classList.add('live');
+    var hover=1, hoverTarget=1, raf=0, last=0, inView=true;
+
+    function measure(r){
+      var gap=parseFloat(getComputedStyle(r.el).columnGap)||16, old=r.half;
+      r.half=(r.el.scrollWidth+gap)/2;            /* one full copy of the items, so the loop is seamless */
+      r.speed=r.half/r.dur;                        /* same pace as the old CSS animation */
+      if(old) r.x=r.x/old*r.half; else if(r.dir>0) r.x=-r.half;
+    }
+    function wrap(r){ if(r.half>0){ var top=r.kb?W.innerWidth:0; while(r.x<=-r.half) r.x+=r.half; while(r.x>top) r.x-=r.half; } }  /* r.kb: keyboard focus may need the first item shown with padding */
+    function paint(r){ r.el.style.transform='translate3d('+r.x.toFixed(2)+'px,0,0)'; }
+
+    function frame(t){
+      var dt=last?Math.min((t-last)/1000,.05):0; last=t;
+      hover+=(hoverTarget-hover)*Math.min(1,dt*5);
+      rows.forEach(function(r){
+        if(!(r.drag&&r.drag.moved)){                 /* a resting finger does not stop it, only an actual drag */
+          var auto=rm.matches?0:r.dir*r.speed*hover;
+          r.v*=Math.pow(.06,dt);                     /* swipe momentum fades back into the auto-scroll */
+          r.x+=(auto+r.v)*dt;
+        }
+        wrap(r); paint(r);
+      });
+      raf=requestAnimationFrame(frame);
+    }
+    function start(){ if(!raf&&inView&&!d.hidden){ last=0; raf=requestAnimationFrame(frame); } }
+    function stop(){ if(raf){ cancelAnimationFrame(raf); raf=0; } }
+
+    rows.forEach(function(r){
+      measure(r); paint(r);
+      r.el.querySelectorAll('img').forEach(function(im){ im.draggable=false; im.addEventListener('load',function(){ measure(r); }); });
+      r.el.addEventListener('dragstart',function(e){ e.preventDefault(); });
+
+      r.el.addEventListener('pointerdown',function(e){
+        if(e.pointerType==='mouse'&&e.button!==0) return;
+        r.drag={id:e.pointerId,sx:e.clientX,lx:e.clientX,lt:e.timeStamp,moved:false}; r.vel=0;
+      });
+      r.el.addEventListener('pointermove',function(e){
+        var g=r.drag; if(!g||g.id!==e.pointerId) return;
+        if(!g.moved){
+          if(Math.abs(e.clientX-g.sx)<6) return;    /* small wobble = still a tap */
+          g.moved=true; r.v=0; r.el.classList.add('dragging');
+          try{ r.el.setPointerCapture(e.pointerId); }catch(_){}
+        }
+        var dx=e.clientX-g.lx, ms=Math.max(e.timeStamp-g.lt,8);
+        r.x+=dx; r.vel=.75*(dx/ms*1000)+.25*r.vel; g.lx=e.clientX; g.lt=e.timeStamp;
+        wrap(r); paint(r);
+      });
+      function end(e){
+        var g=r.drag; if(!g||g.id!==e.pointerId) return;
+        if(g.moved){
+          var auto=rm.matches?0:r.dir*r.speed;
+          r.v=rm.matches?0:clamp(r.vel-auto,-3500,3500);   /* fling (none with reduced motion) */
+          r.justDragged=true; setTimeout(function(){ r.justDragged=false; },60);
+          r.el.classList.remove('dragging');
+          try{ r.el.releasePointerCapture(e.pointerId); }catch(_){}
+        }
+        r.drag=null;
+      }
+      r.el.addEventListener('pointerup',end);
+      r.el.addEventListener('pointercancel',end);    /* e.g. the page starts scrolling vertically */
+      r.el.addEventListener('click',function(e){ if(r.justDragged){ e.stopPropagation(); e.preventDefault(); } },true);
+
+      /* trackpad / shift+wheel sideways scrolling */
+      r.el.addEventListener('wheel',function(e){
+        var dx=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:(e.shiftKey?e.deltaY:0);
+        if(!dx) return; e.preventDefault(); r.x-=dx; r.v=0; wrap(r); paint(r);
+      },{passive:false});
+
+      /* mouse hover slows it right down so a poster can be looked at; touch never pauses it */
+      r.el.addEventListener('pointerenter',function(e){ if(e.pointerType==='mouse') hoverTarget=.2; });
+      r.el.addEventListener('pointerleave',function(e){ if(e.pointerType==='mouse') hoverTarget=1; });
+    });
+
+    /* keyboard: hold still while tabbing through and bring the focused poster into view */
+    reel.addEventListener('focusin',function(e){
+      var b=e.target; if(!b.matches||!b.matches(':focus-visible')) return;
+      hoverTarget=0; hover=0;                       /* stop at once, so the placed item stays put */
+      var row=rows.filter(function(r){ return r.el.contains(b); })[0]; if(!row) return;
+      function place(){
+        reel.scrollLeft=0;                         /* undo the browser's own focus-scroll of the clipped reel */
+        var br=b.getBoundingClientRect(), vw=W.innerWidth, pad=24;
+        if(br.width>vw-pad*2) row.x+=(vw-br.width)/2-br.left;          /* wider than the screen: centre it */
+        else if(br.left<pad) row.x+=pad-br.left; else if(br.right>vw-pad) row.x-=br.right-(vw-pad);
+        row.v=0; row.kb=true; wrap(row); paint(row);
+      }
+      place(); requestAnimationFrame(place);
+    });
+    reel.addEventListener('scroll',function(){ if(reel.scrollLeft) reel.scrollLeft=0; });
+    reel.addEventListener('focusout',function(e){ if(!reel.contains(e.relatedTarget)){ hoverTarget=1; rows.forEach(function(r){ r.kb=false; }); } });
+
+    /* only animate while the reel is on screen and the tab is visible */
+    if('IntersectionObserver' in W){
+      new IntersectionObserver(function(es){ inView=es[0].isIntersecting; inView?start():stop(); },{rootMargin:'100px 0px'}).observe(reel);
+    }
+    d.addEventListener('visibilitychange',function(){ d.hidden?stop():start(); });
+    if('ResizeObserver' in W){ var ro=new ResizeObserver(function(){ rows.forEach(measure); }); rows.forEach(function(r){ ro.observe(r.el); }); }
+    else W.addEventListener('resize',function(){ rows.forEach(measure); });
+    start();
+  })();
 
   /* ---------- lightbox ---------- */
   var lb=d.getElementById('lightbox'), lbImg=d.getElementById('lbImg'), lbClose=d.getElementById('lbClose'), lastFocus=null;
