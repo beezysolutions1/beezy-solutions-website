@@ -255,7 +255,7 @@
   --text:#EEF3EE;
   --muted:#8E9A8E;
   --lime:#2CC795;
-  --brand:#04A174;
+  --brand:#03845F;   /* buttons: a shade deeper than the logo green so white text passes WCAG AA (4.7:1) */
   --green:#04A174;
   --forest:#0B5E4A;
   --deep:#06281F;
@@ -283,7 +283,7 @@
   --line:rgba(10,26,20,.1);
   --text:#0C1512;
   --muted:#5A6A64;
-  --lime:#05936A;
+  --lime:#047857;    /* light theme: green text readable on the pale background (5:1) */
   --text2:#34443E;
   --card:#FFFFFF;
   --card-solid:#E9EEEC;
@@ -652,7 +652,7 @@ footer{border-top:1px solid var(--line);padding:64px 0 40px;background:var(--bg)
 .foot{display:grid;grid-template-columns:1.6fr 1fr 1.2fr 1fr;gap:40px}
 .foot svg{height:38px;width:auto}
 .foot .about{margin-top:18px;color:var(--muted);font-size:.95rem;max-width:46ch}
-.foot h4{font-family:var(--f-label);font-weight:600;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.foot h3{line-height:1.4;font-family:var(--f-label);font-weight:600;font-size:.78rem;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
 .foot ul{list-style:none;display:grid;gap:8px;font-size:.96rem}
 .foot ul a:hover{color:var(--lime)}
 .wordmark{margin-top:60px;font-family:var(--f-display);font-weight:600;font-size:clamp(4rem,17vw,15rem);letter-spacing:-.07em;line-height:.8;color:transparent;-webkit-text-stroke:1px rgba(44,199,149,.28);user-select:none;white-space:nowrap;overflow:hidden}
@@ -945,6 +945,35 @@ body{transition:background-color .4s ease,color .4s ease}
 /* brand icon never mirrors or slides, in any language */
 .wa svg,.wa-go:hover svg,[dir="rtl"] .wa svg,[dir="rtl"] .soc svg,[dir="rtl"] .soc-i svg,[dir="rtl"] .wa .wa-go:hover svg{transform:none}
 .wa.open .wa-fab svg{transform:rotate(90deg) scale(.6)}
+
+/* ---------- QA fixes (shared by every page) ---------- */
+/* very narrow phones (folded Galaxy Fold, 280-340px): the header must fit on one line */
+@media (max-width:340px){
+  :root{--gut:14px}
+  .brand svg{height:26px}
+  .tools{gap:6px;margin-inline-end:6px}
+  .tool{width:36px;height:36px}
+  #langBtn{padding:0 10px;font-size:.85rem}
+  .menu-btn{width:40px;height:40px}
+  .stat{min-width:0}
+  .stat .n{font-size:1.6rem}
+  .rv-score{flex-wrap:wrap;gap:10px 14px;padding:16px 18px}
+}
+.rv-score{max-width:100%}
+@media (max-width:900px){
+  /* the open menu scrolls on its own when it's taller than the screen (phones in landscape) */
+  .nav-links{max-height:calc(100vh - 76px);max-height:calc(100dvh - 76px);overflow-y:auto;overscroll-behavior:contain;background:var(--bg)}
+  /* the page behind an open menu stays put */
+  html.menu-open{overflow:hidden}
+}
+/* jumping to the contact section keeps its heading clear of the fixed header */
+#contact{scroll-margin-top:84px}
+/* easier-to-tap footer and contact links */
+.foot ul{gap:0}
+.foot ul a{display:inline-block;padding-block:4px}
+.info a{display:inline-block;padding-block:3px}
+:root[data-theme="light"] .err{color:#B42318}
+:root[data-theme="light"] .field.bad input{border-color:#D92D20}
 </style>
 </head>
 <body>
@@ -967,7 +996,7 @@ body{transition:background-color .4s ease,color .4s ease}
       <button type="button" class="tool" id="langBtn" aria-label="عرض الموقع باللغة العربية" lang="ar">العربية</button>
       <button type="button" class="tool" id="themeBtn" aria-label="Switch to light theme"><svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M4.6 4.6l1.6 1.6M17.8 17.8l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.6 19.4l1.6-1.6M17.8 6.2l1.6-1.6"/></svg><svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5Z"/></svg></button>
     </div>
-    <button class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks"><span></span></button>
+    <button type="button" class="menu-btn" id="menuBtn" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks"><span></span></button>
   </div>
 </header>
 
@@ -982,7 +1011,7 @@ body{transition:background-color .4s ease,color .4s ease}
         <span class="kicker in d1" data-ar="الهوية · المواقع · الأنظمة · النمو">Branding · Websites · Systems · Growth</span>
         <span class="big rot in d2" id="rot"><span class="ln on" data-ar="تنمية الأعمال ليست سهلة. لهذا وُجدت &lt;em&gt;بيزي.&lt;/em&gt;">Growing a business isn’t easy. That’s why there’s <em>Beezy.</em></span><span class="ln" data-ar="حيث تُبنى العلامات التجارية &lt;em&gt;لتحقق النتائج.&lt;/em&gt;">Where brands are built <em>to perform.</em></span><span class="ln" data-ar="شريكك في النمو، &lt;em&gt;في كل خطوة.&lt;/em&gt;">Your growth partner, <em>every step of the way.</em></span></span>
       </h1>
-      <div class="rot-dots in d3" id="rotDots" aria-hidden="true"><button type="button" class="on"><i></i></button><button type="button"><i></i></button><button type="button"><i></i></button></div>
+      <div class="rot-dots in d3" id="rotDots" aria-hidden="true"><button type="button" tabindex="-1" class="on"><i></i></button><button type="button" tabindex="-1"><i></i></button><button type="button" tabindex="-1"><i></i></button></div>
       <p class="hero-sub in d3" data-ar="من بناء علامتك التجارية إلى زيادة مبيعاتك، نحن معك في كل خطوة. نصمّم هويتك، ونطوّر موقعك الإلكتروني، ونبني أنظمة إدارة العملاء والمبيعات التي يعتمد عليها فريقك، وندير التسويق الرقمي الذي يجلب لك العملاء.">From shaping your brand to growing your sales, we’re with you at every step. We design your identity, build your website, set up the CRM and sales systems your team relies on, and run the digital marketing that brings customers in.</p>
       <div class="hero-cta in d4">
         <a class="btn btn-primary magnet" href="#contact"><span data-ar="تعاون معنا">Work with us</span> <svg viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M2 8h11M9 3.5 13.5 8 9 12.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
@@ -1225,16 +1254,16 @@ body{transition:background-color .4s ease,color .4s ease}
           <li><small data-ar="اتصال أو واتساب">Call or WhatsApp</small><strong><a dir="ltr" href="tel:+919037811776">+91 90378 11776</a></strong></li>
           <li><small data-ar="البريد الإلكتروني">Email</small><strong><a dir="ltr" href="mailto:info@beezysolutions.com">info@beezysolutions.com</a></strong></li>
         </ul>
-                <div class="socials" aria-label="Social media"><a class="soc" href="https://wa.me/919037811776" target="_blank" rel="noopener" aria-label="Chat with Beezy Solutions on WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg><span data-ar="واتساب">WhatsApp</span></a><a class="soc" href="https://www.instagram.com/beezysolutions/" target="_blank" rel="noopener" aria-label="Beezy Solutions on Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1" fill="currentColor" stroke="none"/></svg><span data-ar="إنستغرام">Instagram</span></a><a class="soc" href="https://www.facebook.com/people/Beezy-Solutions/61561675851463/" target="_blank" rel="noopener" aria-label="Beezy Solutions on Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H8v3h2.5V21z"/></svg><span data-ar="فيسبوك">Facebook</span></a><a class="soc" href="https://www.linkedin.com/in/beezy-solutions-161a14363" target="_blank" rel="noopener" aria-label="Beezy Solutions on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 8.5h3V19H5zM6.5 4a1.75 1.75 0 1 1 0 3.5 1.75 1.75 0 0 1 0-3.5zM10 8.5h2.9v1.4h.1c.4-.8 1.4-1.7 3-1.7 3.1 0 3.7 2 3.7 4.7V19h-3v-5.4c0-1.3 0-2.9-1.8-2.9s-2 1.4-2 2.8V19h-3z"/></svg><span data-ar="لينكدإن">LinkedIn</span></a><a class="soc" href="https://www.youtube.com/@beezysolutions" target="_blank" rel="noopener" aria-label="Beezy Solutions on YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.6 7.2a2.6 2.6 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.6 2.6 0 0 0 2.4 7.2 27 27 0 0 0 2 12a27 27 0 0 0 .4 4.8 2.6 2.6 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.6 2.6 0 0 0 1.8-1.8A27 27 0 0 0 22 12a27 27 0 0 0-.4-4.8zM10 15V9l5.2 3z"/></svg><span data-ar="يوتيوب">YouTube</span></a></div>
+                <div class="socials" role="group" aria-label="Social media"><a class="soc" href="https://wa.me/919037811776" target="_blank" rel="noopener" aria-label="Chat with Beezy Solutions on WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg><span data-ar="واتساب">WhatsApp</span></a><a class="soc" href="https://www.instagram.com/beezysolutions/" target="_blank" rel="noopener" aria-label="Beezy Solutions on Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1" fill="currentColor" stroke="none"/></svg><span data-ar="إنستغرام">Instagram</span></a><a class="soc" href="https://www.facebook.com/people/Beezy-Solutions/61561675851463/" target="_blank" rel="noopener" aria-label="Beezy Solutions on Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H8v3h2.5V21z"/></svg><span data-ar="فيسبوك">Facebook</span></a><a class="soc" href="https://www.linkedin.com/in/beezy-solutions-161a14363" target="_blank" rel="noopener" aria-label="Beezy Solutions on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 8.5h3V19H5zM6.5 4a1.75 1.75 0 1 1 0 3.5 1.75 1.75 0 0 1 0-3.5zM10 8.5h2.9v1.4h.1c.4-.8 1.4-1.7 3-1.7 3.1 0 3.7 2 3.7 4.7V19h-3v-5.4c0-1.3 0-2.9-1.8-2.9s-2 1.4-2 2.8V19h-3z"/></svg><span data-ar="لينكدإن">LinkedIn</span></a><a class="soc" href="https://www.youtube.com/@beezysolutions" target="_blank" rel="noopener" aria-label="Beezy Solutions on YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.6 7.2a2.6 2.6 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.6 2.6 0 0 0 2.4 7.2 27 27 0 0 0 2 12a27 27 0 0 0 .4 4.8 2.6 2.6 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.6 2.6 0 0 0 1.8-1.8A27 27 0 0 0 22 12a27 27 0 0 0-.4-4.8zM10 15V9l5.2 3z"/></svg><span data-ar="يوتيوب">YouTube</span></a></div>
       </div>
       <form id="enquiry" name="enquiry" method="POST" action="/" data-netlify="true" netlify-honeypot="bot-field" novalidate>
         <input type="hidden" name="form-name" value="enquiry">
         <input type="hidden" name="source" id="f-source" value="">
         <input type="hidden" name="language" id="f-lang" value="">
-        <p class="hp" aria-hidden="true"><label>Leave this empty <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
-        <div class="field"><label for="f-name" data-ar="الاسم الكامل">Full name</label><input id="f-name" name="name" autocomplete="name" required><span class="err" data-ar="يرجى إدخال اسمك.">Please enter your name.</span></div>
+        <p class="hp" aria-hidden="true"><label>Leave this empty <input type="text" name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+        <div class="field"><label for="f-name" data-ar="الاسم الكامل">Full name</label><input type="text" id="f-name" name="name" autocomplete="name" required><span class="err" data-ar="يرجى إدخال اسمك.">Please enter your name.</span></div>
         <div class="field"><label for="f-phone" data-ar="رقم الهاتف">Phone number</label><input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" required><span class="err" data-ar="يرجى إدخال رقم يمكننا التواصل معك عليه.">Please enter a number we can reach you on.</span></div>
-        <div class="field"><label for="f-biz" data-ar="اسم النشاط التجاري">Business name</label><input id="f-biz" name="business" autocomplete="organization"></div>
+        <div class="field"><label for="f-biz" data-ar="اسم النشاط التجاري">Business name</label><input type="text" id="f-biz" name="business" autocomplete="organization"></div>
         <div class="field"><label for="f-service" data-ar="ما الذي تحتاجه؟">What do you need?</label>
           <select id="f-service" name="service"><option value="Not sure yet" data-ar="لم أحدّد بعد">Not sure yet</option><option value="Branding &amp; Identity" data-ar="الهوية التجارية">Branding &amp; Identity</option><option value="Website Design &amp; Development" data-ar="تصميم وتطوير المواقع">Website Design &amp; Development</option><option value="CRM &amp; App Development" data-ar="تطوير أنظمة CRM والتطبيقات">CRM &amp; App Development</option><option value="NFC Solutions" data-ar="حلول NFC">NFC Solutions</option><option value="Digital Marketing" data-ar="التسويق الرقمي">Digital Marketing</option><option value="Performance Marketing" data-ar="التسويق بالأداء">Performance Marketing</option><option value="Social Media Management" data-ar="إدارة وسائل التواصل الاجتماعي">Social Media Management</option><option value="SEO &amp; Search Visibility" data-ar="تحسين الظهور في محركات البحث">SEO &amp; Search Visibility</option><option value="Video Production" data-ar="إنتاج الفيديو">Video Production</option><option value="Influencer Marketing" data-ar="التسويق عبر المؤثرين">Influencer Marketing</option><option value="Business Consulting" data-ar="استشارات الأعمال">Business Consulting</option></select></div>
         <div class="field full"><label for="f-msg" data-ar="أخبرنا عن عملك أو مشروعك">Tell us about your business or project</label><textarea id="f-msg" name="message"></textarea></div>
@@ -1253,11 +1282,11 @@ body{transition:background-color .4s ease,color .4s ease}
       <div>
         <svg viewBox="0 0 790 240" role="img" aria-label="Beezy Solutions"><use href="#beezy-logo"/></svg>
         <p class="about" data-ar="بيزي سوليوشنز وكالة متخصّصة في الهوية التجارية وتطوير المواقع والتسويق الرقمي. نبني الهويات التجارية والمواقع الإلكترونية وأنظمة CRM والمبيعات، والتسويق الذي ينمّيها، لأكثر من 350 علامة تجارية في أكثر من 20 قطاعًا.">Beezy Solutions is a branding, website development and digital marketing agency. We build brand identities, websites, CRM and sales systems, and the marketing that grows them, for 350+ brands across 20+ industries.</p>
-        <div class="foot-social" aria-label="Follow Beezy Solutions"><a class="soc-i" href="https://wa.me/919037811776" target="_blank" rel="noopener" aria-label="Chat with Beezy Solutions on WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></a><a class="soc-i" href="https://www.instagram.com/beezysolutions/" target="_blank" rel="noopener" aria-label="Beezy Solutions on Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1" fill="currentColor" stroke="none"/></svg></a><a class="soc-i" href="https://www.facebook.com/people/Beezy-Solutions/61561675851463/" target="_blank" rel="noopener" aria-label="Beezy Solutions on Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H8v3h2.5V21z"/></svg></a><a class="soc-i" href="https://www.linkedin.com/in/beezy-solutions-161a14363" target="_blank" rel="noopener" aria-label="Beezy Solutions on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 8.5h3V19H5zM6.5 4a1.75 1.75 0 1 1 0 3.5 1.75 1.75 0 0 1 0-3.5zM10 8.5h2.9v1.4h.1c.4-.8 1.4-1.7 3-1.7 3.1 0 3.7 2 3.7 4.7V19h-3v-5.4c0-1.3 0-2.9-1.8-2.9s-2 1.4-2 2.8V19h-3z"/></svg></a><a class="soc-i" href="https://www.youtube.com/@beezysolutions" target="_blank" rel="noopener" aria-label="Beezy Solutions on YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.6 7.2a2.6 2.6 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.6 2.6 0 0 0 2.4 7.2 27 27 0 0 0 2 12a27 27 0 0 0 .4 4.8 2.6 2.6 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.6 2.6 0 0 0 1.8-1.8A27 27 0 0 0 22 12a27 27 0 0 0-.4-4.8zM10 15V9l5.2 3z"/></svg></a></div>
+        <div class="foot-social" role="group" aria-label="Follow Beezy Solutions"><a class="soc-i" href="https://wa.me/919037811776" target="_blank" rel="noopener" aria-label="Chat with Beezy Solutions on WhatsApp"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg></a><a class="soc-i" href="https://www.instagram.com/beezysolutions/" target="_blank" rel="noopener" aria-label="Beezy Solutions on Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.4" cy="6.6" r="1" fill="currentColor" stroke="none"/></svg></a><a class="soc-i" href="https://www.facebook.com/people/Beezy-Solutions/61561675851463/" target="_blank" rel="noopener" aria-label="Beezy Solutions on Facebook"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 21v-7.5h2.6l.4-3h-3V8.6c0-.9.3-1.5 1.5-1.5h1.6V4.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.8 1.4-3.8 3.9v2.3H8v3h2.5V21z"/></svg></a><a class="soc-i" href="https://www.linkedin.com/in/beezy-solutions-161a14363" target="_blank" rel="noopener" aria-label="Beezy Solutions on LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 8.5h3V19H5zM6.5 4a1.75 1.75 0 1 1 0 3.5 1.75 1.75 0 0 1 0-3.5zM10 8.5h2.9v1.4h.1c.4-.8 1.4-1.7 3-1.7 3.1 0 3.7 2 3.7 4.7V19h-3v-5.4c0-1.3 0-2.9-1.8-2.9s-2 1.4-2 2.8V19h-3z"/></svg></a><a class="soc-i" href="https://www.youtube.com/@beezysolutions" target="_blank" rel="noopener" aria-label="Beezy Solutions on YouTube"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.6 7.2a2.6 2.6 0 0 0-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.6 2.6 0 0 0 2.4 7.2 27 27 0 0 0 2 12a27 27 0 0 0 .4 4.8 2.6 2.6 0 0 0 1.8 1.8C5.8 19 12 19 12 19s6.2 0 7.8-.4a2.6 2.6 0 0 0 1.8-1.8A27 27 0 0 0 22 12a27 27 0 0 0-.4-4.8zM10 15V9l5.2 3z"/></svg></a></div>
       </div>
-      <div><h4 data-ar="استكشف">Explore</h4><ul><li><a href="#work" data-ar="أعمالنا">Work</a></li><li><a href="#clients" data-ar="عملاؤنا">Clients</a></li><li><a href="#services" data-ar="خدماتنا">Services</a></li><li><a href="#approach" data-ar="منهجنا">Approach</a></li></ul></div>
-      <div><h4 data-ar="تواصل معنا">Contact</h4><ul><li><a dir="ltr" href="tel:+919037811776">+91 90378 11776</a></li><li><a dir="ltr" href="mailto:info@beezysolutions.com">info@beezysolutions.com</a></li></ul></div>
-      <div><h4 data-ar="قانوني">Legal</h4><ul><li><a href="terms.html" data-ar="الشروط والأحكام">Terms &amp; Conditions</a></li><li><a href="privacy.html" data-ar="سياسة الخصوصية">Privacy Policy</a></li></ul></div>
+      <div><h3 data-ar="استكشف">Explore</h3><ul><li><a href="#work" data-ar="أعمالنا">Work</a></li><li><a href="#clients" data-ar="عملاؤنا">Clients</a></li><li><a href="#services" data-ar="خدماتنا">Services</a></li><li><a href="#approach" data-ar="منهجنا">Approach</a></li></ul></div>
+      <div><h3 data-ar="تواصل معنا">Contact</h3><ul><li><a dir="ltr" href="tel:+919037811776">+91 90378 11776</a></li><li><a dir="ltr" href="mailto:info@beezysolutions.com">info@beezysolutions.com</a></li></ul></div>
+      <div><h3 data-ar="قانوني">Legal</h3><ul><li><a href="terms.html" data-ar="الشروط والأحكام">Terms &amp; Conditions</a></li><li><a href="privacy.html" data-ar="سياسة الخصوصية">Privacy Policy</a></li></ul></div>
     </div>
     <div class="wordmark" aria-hidden="true">beezy</div>
     <div class="foot-base"><span data-ar="© &lt;span id=&quot;yr&quot;&gt;2026&lt;/span&gt; بيزي سوليوشنز. جميع الحقوق محفوظة.">© <span id="yr">2026</span> Beezy Solutions. All rights reserved.</span><span data-ar="حيث تُبنى العلامات التجارية لتحقق النتائج.">Where brands are built to perform.</span></div>
@@ -1642,10 +1671,21 @@ body{transition:background-color .4s ease,color .4s ease}
     return out;
   })();
 
+  /* a phone number: 7-15 digits, optionally with + ( ) - . and spaces */
+  function phoneOk(v){ var digits=v.replace(/\D/g,''); return /^\+?[\d\s().-]+$/.test(v) && digits.length>=7 && digits.length<=15; }
+  function check(f){ var v=f.value.trim(), bad=!v || (f.id==='f-phone' && !phoneOk(v)); f.parentElement.classList.toggle('bad',bad); f.setAttribute('aria-invalid',bad?'true':'false'); return !bad; }
+  ['f-name','f-phone'].forEach(function(id){
+    var f=d.getElementById(id), err=f.parentElement.querySelector('.err');
+    if(err){ err.id=id+'-err'; f.setAttribute('aria-describedby',err.id); }
+    /* once a field has been flagged, re-check it as the visitor types so the error clears straight away */
+    f.addEventListener('input',function(){ if(f.parentElement.classList.contains('bad')) check(f); });
+  });
+  var sending=false;
   form.addEventListener('submit',function(e){
     e.preventDefault(); var ok=true;
-    ['f-name','f-phone'].forEach(function(id){var f=d.getElementById(id),bad=!f.value.trim();f.parentElement.classList.toggle('bad',bad);if(bad&&ok){f.focus();ok=false}});
-    if(!ok) return;
+    ['f-name','f-phone'].forEach(function(id){var f=d.getElementById(id);if(!check(f)&&ok){f.focus();ok=false}});
+    if(!ok || sending) return;
+    sending=true; setTimeout(function(){ sending=false; },2000);   /* a double tap sends one lead and opens one chat */
     var v=function(id){return d.getElementById(id).value.trim()};
     var msg='Hi Beezy Solutions!\nName: '+v('f-name')+'\nPhone: '+v('f-phone')+(v('f-biz')?'\nBusiness: '+v('f-biz'):'')+'\nNeed: '+v('f-service')+(v('f-msg')?'\n\n'+v('f-msg'):'');
     waHref='https://wa.me/919037811776?text='+encodeURIComponent(msg);
@@ -1742,6 +1782,18 @@ body{transition:background-color .4s ease,color .4s ease}
   /* hide while an image is open in the lightbox */
   var lb=d.querySelector('.lightbox');if(lb)new MutationObserver(function(){root.classList.toggle('lb-open',!lb.hidden)}).observe(lb,{attributes:true,attributeFilter:['hidden']});
   labels();
+})();
+</script>
+<script>
+/* menu: Escape, tapping outside it, or choosing a link closes it; its label follows the state and language */
+(function(){
+  var d=document,root=d.documentElement,btn=d.getElementById('menuBtn'),nav=d.getElementById('navLinks');if(!btn||!nav)return;
+  function sync(){var o=root.classList.contains('menu-open'),ar=root.lang==='ar';btn.setAttribute('aria-expanded',o?'true':'false');btn.setAttribute('aria-label',o?(ar?'إغلاق القائمة':'Close menu'):(ar?'فتح القائمة':'Open menu'))}
+  function close(focus){if(!root.classList.contains('menu-open'))return;root.classList.remove('menu-open');if(focus)btn.focus()}
+  new MutationObserver(sync).observe(root,{attributes:true,attributeFilter:['class','lang']});sync();
+  d.addEventListener('keydown',function(e){if(e.key==='Escape')close(true)});
+  d.addEventListener('click',function(e){if(root.classList.contains('menu-open')&&!nav.contains(e.target)&&!btn.contains(e.target))close(false)});
+  nav.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('a'))close(false)});
 })();
 </script>
 </body>
