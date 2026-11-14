@@ -1,0 +1,67 @@
+# Netlify configuration for www.beezysolutions.in
+# Plain static site: no build step, publish the repository root.
+
+[build]
+  publish = "."
+  command = ""
+
+# ---------------------------------------------------------------------------
+# Security headers for every response
+# ---------------------------------------------------------------------------
+[[headers]]
+  for = "/*"
+  [headers.values]
+    # Always use HTTPS for a year (this domain only, so subdomains such as a CRM are unaffected)
+    Strict-Transport-Security = "max-age=31536000"
+    # Don't let browsers guess file types
+    X-Content-Type-Options = "nosniff"
+    # The site can't be embedded in other sites' frames (clickjacking protection)
+    X-Frame-Options = "SAMEORIGIN"
+    # Send only the domain, not full URLs, when visitors click outbound links
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    # Switch off powerful browser features the site never uses
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+
+# ---------------------------------------------------------------------------
+# Caching
+# Pages always revalidate so edits show up immediately after a deploy.
+# Images and icons are cached for 7 days; they aren't fingerprinted, so a
+# longer cache would keep an old image around after it's replaced.
+# ---------------------------------------------------------------------------
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+
+[[headers]]
+  for = "/og-image.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, stale-while-revalidate=86400"
+
+[[headers]]
+  for = "/*.ico"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/*.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/icon-*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/apple-touch-icon.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "/site.webmanifest"
+  [headers.values]
+    Content-Type = "application/manifest+json; charset=utf-8"
+    Cache-Control = "public, max-age=86400"
+
+# Missing pages show 404.html automatically (Netlify serves it with a 404 status).
