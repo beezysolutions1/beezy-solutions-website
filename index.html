@@ -464,9 +464,7 @@ section{position:relative}
 .r1{margin-top:44px;animation:reelL 32s linear infinite}
 .r2{margin-top:16px;animation:reelR 27s linear infinite}
 .reel:hover .row{animation-play-state:paused}
-.reel.live .row{animation:none;cursor:grab;touch-action:pan-y;-webkit-user-select:none;user-select:none}
-.reel.live .row.dragging{cursor:grabbing}
-.reel.live .row.dragging .poster,.reel.live .row.dragging .grid{pointer-events:none}
+.reel.live .row{animation:none;-webkit-user-select:none;user-select:none}
 .reel.live .row img{-webkit-user-drag:none;user-drag:none}
 @keyframes reelL{from{transform:translate3d(0,0,0)}to{transform:translate3d(-50%,0,0)}}
 @keyframes reelR{from{transform:translate3d(-50%,0,0)}to{transform:translate3d(0,0,0)}}
@@ -1445,12 +1443,12 @@ body{transition:background-color .4s ease,color .4s ease}
     items.forEach(function(el){io.observe(el)});
   }
 
-  /* ---------- social reel: always moving, draggable, never freezes on touch ---------- */
+  /* ---------- social reel: steady auto-scroll, unaffected by touch or hover ---------- */
   (function(){
     var reel=d.getElementById('reel'); if(!reel || !W.requestAnimationFrame) return;
     var rm=W.matchMedia?W.matchMedia('(prefers-reduced-motion: reduce)'):{matches:false};
     var rows=[[d.getElementById('r1'),-1,32],[d.getElementById('r2'),1,27]].filter(function(r){return r[0]}).map(function(r){
-      return {el:r[0],dir:r[1],dur:r[2],x:0,v:0,half:0,speed:0,drag:null,vel:0,justDragged:false};
+      return {el:r[0],dir:r[1],dur:r[2],x:0,half:0,speed:0};
     });
     if(!rows.length) return;
     reel.classList.add('live');
@@ -1469,11 +1467,7 @@ body{transition:background-color .4s ease,color .4s ease}
       var dt=last?Math.min((t-last)/1000,.05):0; last=t;
       hover+=(hoverTarget-hover)*Math.min(1,dt*5);
       rows.forEach(function(r){
-        if(!(r.drag&&r.drag.moved)){                 /* a resting finger does not stop it, only an actual drag */
-          var auto=rm.matches?0:r.dir*r.speed*hover;
-          r.v*=Math.pow(.06,dt);                     /* swipe momentum fades back into the auto-scroll */
-          r.x+=(auto+r.v)*dt;
-        }
+        r.x+=(rm.matches?0:r.dir*r.speed*hover)*dt;
         wrap(r); paint(r);
       });
       raf=requestAnimationFrame(frame);
@@ -1486,45 +1480,7 @@ body{transition:background-color .4s ease,color .4s ease}
       r.el.querySelectorAll('img').forEach(function(im){ im.draggable=false; im.addEventListener('load',function(){ measure(r); }); });
       r.el.addEventListener('dragstart',function(e){ e.preventDefault(); });
 
-      r.el.addEventListener('pointerdown',function(e){
-        if(e.pointerType==='mouse'&&e.button!==0) return;
-        r.drag={id:e.pointerId,sx:e.clientX,lx:e.clientX,lt:e.timeStamp,moved:false}; r.vel=0;
-      });
-      r.el.addEventListener('pointermove',function(e){
-        var g=r.drag; if(!g||g.id!==e.pointerId) return;
-        if(!g.moved){
-          if(Math.abs(e.clientX-g.sx)<6) return;    /* small wobble = still a tap */
-          g.moved=true; r.v=0; r.el.classList.add('dragging');
-          try{ r.el.setPointerCapture(e.pointerId); }catch(_){}
-        }
-        var dx=e.clientX-g.lx, ms=Math.max(e.timeStamp-g.lt,8);
-        r.x+=dx; r.vel=.75*(dx/ms*1000)+.25*r.vel; g.lx=e.clientX; g.lt=e.timeStamp;
-        wrap(r); paint(r);
-      });
-      function end(e){
-        var g=r.drag; if(!g||g.id!==e.pointerId) return;
-        if(g.moved){
-          var auto=rm.matches?0:r.dir*r.speed;
-          r.v=rm.matches?0:clamp(r.vel-auto,-3500,3500);   /* fling (none with reduced motion) */
-          r.justDragged=true; setTimeout(function(){ r.justDragged=false; },60);
-          r.el.classList.remove('dragging');
-          try{ r.el.releasePointerCapture(e.pointerId); }catch(_){}
-        }
-        r.drag=null;
-      }
-      r.el.addEventListener('pointerup',end);
-      r.el.addEventListener('pointercancel',end);    /* e.g. the page starts scrolling vertically */
-      r.el.addEventListener('click',function(e){ if(r.justDragged){ e.stopPropagation(); e.preventDefault(); } },true);
-
-      /* trackpad / shift+wheel sideways scrolling */
-      r.el.addEventListener('wheel',function(e){
-        var dx=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:(e.shiftKey?e.deltaY:0);
-        if(!dx) return; e.preventDefault(); r.x-=dx; r.v=0; wrap(r); paint(r);
-      },{passive:false});
-
-      /* mouse hover slows it right down so a poster can be looked at; touch never pauses it */
-      r.el.addEventListener('pointerenter',function(e){ if(e.pointerType==='mouse') hoverTarget=.2; });
-      r.el.addEventListener('pointerleave',function(e){ if(e.pointerType==='mouse') hoverTarget=1; });
+      /* touching, dragging or hovering never changes them: same pace and direction at all times */
     });
 
     /* keyboard: hold still while tabbing through and bring the focused poster into view */
@@ -1537,7 +1493,7 @@ body{transition:background-color .4s ease,color .4s ease}
         var br=b.getBoundingClientRect(), vw=W.innerWidth, pad=24;
         if(br.width>vw-pad*2) row.x+=(vw-br.width)/2-br.left;          /* wider than the screen: centre it */
         else if(br.left<pad) row.x+=pad-br.left; else if(br.right>vw-pad) row.x-=br.right-(vw-pad);
-        row.v=0; row.kb=true; wrap(row); paint(row);
+        row.kb=true; wrap(row); paint(row);
       }
       place(); requestAnimationFrame(place);
     });
