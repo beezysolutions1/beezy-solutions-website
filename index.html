@@ -429,9 +429,18 @@ section{position:relative}
 .logo.more small{color:#CDEBE2;font-size:.84rem}
 
 .countries{margin-top:56px;display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap;padding-top:34px;border-top:1px solid var(--line)}
-.flag-row{list-style:none;display:flex;flex-wrap:wrap;gap:14px 34px}
-.flag{display:flex;align-items:center;gap:12px;font-family:var(--f-display);font-weight:500;font-size:1.05rem;letter-spacing:-.01em}
-.flag img{width:34px;height:25px;border-radius:4px;object-fit:cover;box-shadow:0 0 0 1px var(--edge)}
+.flag-row{list-style:none;display:flex;flex-wrap:wrap;gap:10px}
+.flag{display:flex;align-items:center;gap:12px;padding-block:7px;padding-inline:7px 18px;border-radius:999px;border:1px solid var(--line);background:var(--card);font-family:var(--f-display);font-weight:500;font-size:1.02rem;letter-spacing:-.01em;transition:border-color .35s,transform .45s var(--ease),box-shadow .45s}
+.flag:hover{border-color:rgba(44,199,149,.45);transform:translateY(-3px);box-shadow:0 14px 30px -18px rgba(4,161,116,.7)}
+/* round flag badge */
+.fl{position:relative;flex:none;width:38px;height:38px;border-radius:50%;overflow:hidden;box-shadow:0 0 0 2px var(--bg),0 0 0 3px var(--edge);transition:transform .45s var(--ease),box-shadow .35s}
+.fl img{width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block}
+.fl::after{content:"";position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 32% 26%,rgba(255,255,255,.38),rgba(255,255,255,0) 46%),radial-gradient(circle at 50% 120%,rgba(0,0,0,.28),rgba(0,0,0,0) 60%);box-shadow:inset 0 0 0 1px rgba(0,0,0,.12);pointer-events:none}
+.flag:hover .fl{transform:scale(1.08) rotate(-4deg);box-shadow:0 0 0 2px var(--bg),0 0 0 3px var(--lime)}
+/* keep each flag's key feature inside the circle */
+.fl-ae img{object-position:18% 50%}
+.fl-au img{object-position:22% 50%}
+.fl-gb img,.fl-in img,.fl-eg img,.fl-sa img{object-position:50% 50%}
 
 /* work */
 .work{padding:clamp(90px,12vw,150px) 0 clamp(80px,10vw,130px);border-top:1px solid var(--line)}
@@ -562,7 +571,8 @@ section{position:relative}
 .pillar ul{position:relative;list-style:none;display:flex;flex-wrap:wrap;gap:6px;margin-top:16px}
 .pillar .flags{gap:8px}
 .pillar .flags li{display:inline-flex;align-items:center;gap:7px;padding:5px 11px 5px 6px}
-.pillar .flags img{width:20px;height:15px;border-radius:3px;object-fit:cover;box-shadow:0 0 0 1px rgba(255,255,255,.18)}
+.pillar .flags .fl{width:22px;height:22px;box-shadow:0 0 0 1.5px rgba(255,255,255,.28)}
+.pillar .flags li{padding:4px 11px 4px 4px}
 .pillar li{font-family:var(--f-label);font-weight:600;letter-spacing:.1em;text-transform:uppercase;font-size:.76rem;padding:5px 11px;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:rgba(0,0,0,.25)}
 
 /* industries */
@@ -693,7 +703,7 @@ footer{border-top:1px solid var(--line);padding:64px 0 40px;background:var(--bg)
   .hero h1 .big{max-width:none}
   .platform-row .plat{height:46px;padding:0 16px}
   .countries{flex-direction:column;align-items:flex-start}
-  .flag-row{gap:16px 22px}
+  .flag-row{gap:8px}
   .logos{grid-template-columns:repeat(2,1fr);gap:10px}
   .logos .more{grid-column:auto}
   .logo{height:96px}
@@ -989,7 +999,7 @@ body{transition:background-color .4s ease,color .4s ease}
     </ul>
     <div class="countries" data-reveal>
       <p class="label" data-ar="في ست دول">Across six countries</p>
-      <ul class="flag-row"><li class="flag"><img src="assets/flag-in.svg" alt="" width="34" height="25"><span data-ar="الهند">India</span></li><li class="flag"><img src="assets/flag-ae.svg" alt="" width="34" height="25"><span data-ar="الإمارات">UAE</span></li><li class="flag"><img src="assets/flag-sa.svg" alt="" width="34" height="25"><span data-ar="السعودية">Saudi Arabia</span></li><li class="flag"><img src="assets/flag-gb.svg" alt="" width="34" height="25"><span data-ar="المملكة المتحدة">UK</span></li><li class="flag"><img src="assets/flag-au.svg" alt="" width="34" height="25"><span data-ar="أستراليا">Australia</span></li><li class="flag"><img src="assets/flag-eg.svg" alt="" width="34" height="25"><span data-ar="مصر">Egypt</span></li></ul>
+      <ul class="flag-row"><li class="flag"><span class="fl fl-in" aria-hidden="true"><img src="assets/flag-in.svg" alt="" width="34" height="25"></span><span data-ar="الهند">India</span></li><li class="flag"><span class="fl fl-ae" aria-hidden="true"><img src="assets/flag-ae.svg" alt="" width="34" height="25"></span><span data-ar="الإمارات">UAE</span></li><li class="flag"><span class="fl fl-sa" aria-hidden="true"><img src="assets/flag-sa.svg" alt="" width="34" height="25"></span><span data-ar="السعودية">Saudi Arabia</span></li><li class="flag"><span class="fl fl-gb" aria-hidden="true"><img src="assets/flag-gb.svg" alt="" width="34" height="25"></span><span data-ar="المملكة المتحدة">UK</span></li><li class="flag"><span class="fl fl-au" aria-hidden="true"><img src="assets/flag-au.svg" alt="" width="34" height="25"></span><span data-ar="أستراليا">Australia</span></li><li class="flag"><span class="fl fl-eg" aria-hidden="true"><img src="assets/flag-eg.svg" alt="" width="34" height="25"></span><span data-ar="مصر">Egypt</span></li></ul>
     </div>
   </div>
 </section>
