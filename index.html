@@ -662,6 +662,20 @@ footer{border-top:1px solid var(--line);padding:64px 0 40px;background:var(--bg)
 .reveal{transition:opacity .9s var(--ease),transform .9s var(--ease),filter .9s var(--ease)}
 .js .pre{opacity:0;transform:translateY(34px);filter:blur(6px)}
 
+/* touch screens: the hover effects play on their own as things scroll into view */
+.glow.amb{width:460px;height:460px;margin:-230px 0 0 -230px;background:radial-gradient(circle,rgba(44,199,149,.2),rgba(44,199,149,.06) 42%,transparent 68%)}
+.pillar.lit{border-color:rgba(44,199,149,.4)}
+.pillar.lit::before{opacity:1}
+.flag.lit{border-color:rgba(44,199,149,.45);transform:translateY(-3px);box-shadow:0 14px 30px -18px rgba(4,161,116,.7)}
+.flag.lit .fl{transform:scale(1.08) rotate(-4deg);box-shadow:0 0 0 2px var(--bg),0 0 0 3px var(--lime)}
+@media (hover:none){
+  .btn,.flag,.poster,.g-badge,.badge span,.tool{-webkit-tap-highlight-color:transparent}
+  .btn{transition:background-color .3s,color .3s,border-color .3s,box-shadow .3s,transform .18s var(--ease)}
+  .btn:active,.g-badge:active,.tool:active{transform:scale(.96)}
+  .flag:active,.poster:active{transform:scale(.97)}
+  .badge:active span{transform:scale(1.12)}
+}
+
 /* responsive */
 @media (max-width:1080px){
   .logos{grid-template-columns:repeat(4,1fr)}
@@ -690,14 +704,17 @@ footer{border-top:1px solid var(--line);padding:64px 0 40px;background:var(--bg)
   .foot>div:first-child{grid-column:1/-1}
 }
 @media (max-width:900px){
-  .case{position:relative;top:auto;grid-template-columns:1fr;height:auto;transform:none}
+  .case{position:relative;top:auto;grid-template-columns:1fr;height:auto;transform:scale(var(--ms,1));transform-origin:50% 100%;opacity:var(--mo,1)}
   .case::after{display:none}
   .case-media{aspect-ratio:16/10}
+  .case-media img,.case:hover .case-media img{transform:translate3d(0,var(--iy,0px),0) scale(1.14);transition:none}
   .case h3{margin-top:4px}
 }
 @media (max-width:640px){
   .hero h1 .big{font-size:clamp(2.6rem,12.4vw,3.8rem)}
-  .badge{display:none}
+  .badge{width:92px;height:92px}
+  .badge span{width:40px;height:40px}
+  .badge span svg{width:16px;height:16px}
   .avs i{width:38px;height:38px}
   .trust p b{font-size:1rem}
   .hero h1 .big{max-width:none}
@@ -1290,7 +1307,7 @@ body{transition:background-color .4s ease,color .4s ease}
   readDot();
   function paint(){
     ctx.clearRect(0,0,VW,VH);
-    var R=180, active=false;
+    var R=VW<700?140:180, active=false;
     for(var i=0;i<dots.length;i++){
       var p=dots[i], dx=p.x-mx, dy=p.y-my, dist=Math.sqrt(dx*dx+dy*dy);
       var t=dist<R?1-dist/R:0; p.v+=(t-p.v)*0.16; if(p.v>0.01) active=true;
@@ -1320,6 +1337,32 @@ body{transition:background-color .4s ease,color .4s ease}
       if(!running){running=true;requestAnimationFrame(loop)}
     },{passive:true});
     d.addEventListener('pointerleave',function(){mx=my=-9999});
+  } else if(!reduce){
+    /* touch screens: no cursor, so the glow and dot ripple drift on their own
+       and jump to your finger whenever you touch the screen */
+    glow.classList.add('amb');
+    var touchT=-1e9, tx=0, ty=0, fx=-9999, fy=0, t0=performance.now(), lastPaint=0, ambOn=false;
+    function onTouch(e){ var t=e.touches&&e.touches[0]; if(!t) return; tx=t.clientX; ty=t.clientY; touchT=performance.now(); }
+    d.addEventListener('touchstart',onTouch,{passive:true});
+    d.addEventListener('touchmove',onTouch,{passive:true});
+    function amb(ts){
+      if(d.hidden){ ambOn=false; return; }
+      requestAnimationFrame(amb);
+      if(ts-lastPaint<30) return;                       /* ~30 fps is plenty for a background, and kinder to the battery */
+      lastPaint=ts;
+      var s=(ts-t0)/1000, touching=ts-touchT<1600;
+      var ax=VW*(.5+.36*Math.sin(s*.33)), ay=VH*(.4+.28*Math.sin(s*.21+1.2));
+      var X=touching?tx:ax, Y=touching?ty:ay, k=touching?.35:.06;
+      if(fx<-900){ fx=X; fy=Y; }
+      fx+=(X-fx)*k; fy+=(Y-fy)*k; mx=fx; my=fy;
+      if(gx<-900){ gx=mx; gy=my; }
+      gx+=(mx-gx)*.18; gy+=(my-gy)*.18;
+      glow.style.transform='translate3d('+gx.toFixed(1)+'px,'+gy.toFixed(1)+'px,0)';
+      paint();
+    }
+    function startAmb(){ if(!ambOn && !d.hidden){ ambOn=true; requestAnimationFrame(amb); } }
+    d.addEventListener('visibilitychange',startAmb);
+    startAmb();
   } else { glow.style.display='none'; }
 
   /* magnetic primary buttons */
@@ -1330,6 +1373,13 @@ body{transition:background-color .4s ease,color .4s ease}
     });
     d.querySelectorAll('.pillar').forEach(function(c){
       c.addEventListener('pointermove',function(e){var r=c.getBoundingClientRect();c.style.setProperty('--px',(e.clientX-r.left)+'px');c.style.setProperty('--py',(e.clientY-r.top)+'px')});
+    });
+  }
+
+  /* pillars on touch: tapping moves the spotlight to your finger */
+  if(!finePointer && !reduce){
+    d.querySelectorAll('.pillar').forEach(function(c){
+      c.addEventListener('pointerdown',function(e){var r=c.getBoundingClientRect();c.style.setProperty('--px',(e.clientX-r.left)+'px');c.style.setProperty('--py',(e.clientY-r.top)+'px');c.dataset.tap=Date.now()});
     });
   }
 
@@ -1352,6 +1402,7 @@ body{transition:background-color .4s ease,color .4s ease}
 
   /* ---------- one scroll loop for every scroll-driven effect ---------- */
   var heroInner=d.getElementById('heroInner'), heroCopy=heroInner.firstElementChild, floorB=d.querySelector('.floor b'), ticking=false;
+  var pillars=[].slice.call(d.querySelectorAll('.pillar'));
   var cases=[].slice.call(d.querySelectorAll('.case')), reel=d.getElementById('reel'), r1=d.getElementById('r1'), r2=d.getElementById('r2');
   function onScroll(){
     var y=W.scrollY, vh=W.innerHeight;
@@ -1368,6 +1419,28 @@ body{transition:background-color .4s ease,color .4s ease}
       for(var c=0;c<cases.length-1;c++){
         var a=cases[c].getBoundingClientRect(), b=cases[c+1].getBoundingClientRect(), ov=clamp((a.bottom-b.top)/a.height,0,1);
         cases[c].style.setProperty('--s',(1-ov*.06).toFixed(4)); cases[c].style.setProperty('--dim',(ov*.55).toFixed(3));
+      }
+    } else if(!reduce){
+      /* phones / tablets: each project card grows into place as it scrolls in, and its picture drifts slower than the page */
+      for(var m=0;m<cases.length;m++){
+        var cr=cases[m].getBoundingClientRect();
+        if(cr.bottom<-40 || cr.top>vh+40) continue;
+        var e=clamp((vh-cr.top)/(vh*.55),0,1); e=1-Math.pow(1-e,3);
+        cases[m].style.setProperty('--ms',(.9+e*.1).toFixed(4));
+        cases[m].style.setProperty('--mo',(.35+e*.65).toFixed(3));
+        var img=cases[m].querySelector('.case-media'), ir=img.getBoundingClientRect();
+        cases[m].style.setProperty('--iy',(((ir.top+ir.height/2)-vh/2)*-.09).toFixed(1)+'px');
+      }
+    }
+    if(!finePointer && !reduce){
+      /* pillars on touch: the card nearest the middle of the screen lights up, its spotlight sweeping down as you scroll */
+      for(var q=0;q<pillars.length;q++){
+        var pr=pillars[q].getBoundingClientRect(), mid=(pr.top+pr.height/2)/vh, on=mid>.18 && mid<.78;
+        pillars[q].classList.toggle('lit',on);
+        if(on && !(Date.now()-(+pillars[q].dataset.tap||0)<2500)){
+          pillars[q].style.setProperty('--px','50%');
+          pillars[q].style.setProperty('--py',clamp((.85-mid)/.7*100,0,100).toFixed(1)+'%');
+        }
       }
     }
     ticking=false;
@@ -1429,6 +1502,15 @@ body{transition:background-color .4s ease,color .4s ease}
       if(e.isIntersecting && !timer){ timer=setInterval(function(){ tiles.forEach(function(t){t.classList.remove('lit')}); tiles[li%tiles.length].classList.add('lit'); li++; },1400); }
       else if(!e.isIntersecting && timer){ clearInterval(timer); timer=null; tiles.forEach(function(t){t.classList.remove('lit')}); }
     }); },{threshold:.3}).observe(d.getElementById('logos'));
+  }
+
+  var flagEls=[].slice.call(d.querySelectorAll('.flag-row .flag')), flagRow=d.querySelector('.flag-row');
+  if(!finePointer && !reduce && flagEls.length && flagRow && 'IntersectionObserver' in W){
+    var fi=0, ftimer=null;
+    new IntersectionObserver(function(es){ es.forEach(function(e){
+      if(e.isIntersecting && !ftimer){ ftimer=setInterval(function(){ flagEls.forEach(function(t){t.classList.remove('lit')}); flagEls[fi%flagEls.length].classList.add('lit'); fi++; },1100); }
+      else if(!e.isIntersecting && ftimer){ clearInterval(ftimer); ftimer=null; flagEls.forEach(function(t){t.classList.remove('lit')}); }
+    }); },{threshold:.4}).observe(flagRow);
   }
 
   /* ---------- count-up + reveal ---------- */
