@@ -41,3 +41,29 @@ Upload the repository contents to any static host so that `index.html` sits at t
 - **cPanel / Hostinger / GoDaddy**: upload to `public_html`
 - **Netlify / Vercel / Cloudflare Pages**: import this repository, no build command, publish directory `/`
 - **GitHub Pages**: Settings → Pages → deploy from the `main` branch, root folder (requires a public repo on the free plan)
+
+## Safety nets (why the site doesn't break)
+
+1. **Pre-deploy check — `scripts/check.mjs`.** Netlify runs it before every deploy. It checks that
+   every linked file exists (with exact upper/lower case), every script is valid JavaScript, the
+   structured data is valid, HTML tags are closed, in-page links point at real sections, every
+   WhatsApp link uses 919037811776, and the enquiry form is still wired to Netlify Forms. If
+   anything is wrong, **Netlify cancels the deploy and the last working version stays live**.
+   Run it yourself: `node scripts/check.mjs`.
+
+2. **Browser tests — `tests/site.test.mjs`.** GitHub runs them on every push (Actions tab →
+   "Site checks"). ~270 checks: all pages at 280px → 1920px, English and Arabic, dark and light,
+   the menu, language and theme, the enquiry form → WhatsApp, the WhatsApp button, animations on
+   phones (including battery-saver mode), keyboard access and WCAG 2.2 AA accessibility. GitHub
+   emails you if a check fails.
+
+3. **Live-site monitor — `tests/live.mjs`.** GitHub runs it every 6 hours: site up, all pages
+   reachable, non-www and http redirects, HTTPS certificate validity, and **domain expiry** (warns
+   30 days ahead). GitHub emails you if anything fails. Run it now from the Actions tab →
+   "Site checks" → "Run workflow".
+
+4. **Fail-safe page scripts.** Each animation runs in its own safety box and the enquiry form has
+   a script of its own, so if one part ever fails, the menu, language switch, form and WhatsApp
+   button keep working, and no content is ever left invisible.
+
+`/scripts`, `/tests` and `/.github` are blocked from the public site in `netlify.toml`.

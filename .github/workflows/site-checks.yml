@@ -1,0 +1,48 @@
+# Automatic checks for www.beezysolutions.in
+# GitHub emails the repository owner whenever one of these fails.
+name: Site checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "23 */6 * * *"   # live-site health check every 6 hours
+  workflow_dispatch:          # "Run workflow" button on the Actions tab
+
+concurrency:
+  group: site-checks-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test the website in a browser
+    if: github.event_name != 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Pre-deploy check (same one Netlify runs)
+        run: node scripts/check.mjs
+      - name: Install test tools
+        run: npm ci --prefix tests
+      - name: Install Chromium
+        run: npx --prefix tests playwright install --with-deps chromium
+      - name: Browser tests (all pages, sizes, languages, form, animations, accessibility)
+        run: node tests/site.test.mjs
+
+  live:
+    name: Live site is healthy
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check www.beezysolutions.in
+        run: node tests/live.mjs

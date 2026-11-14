@@ -1,0 +1,14 @@
+{
+  "name": "beezy-site-tests",
+  "private": true,
+  "description": "Automated checks for www.beezysolutions.in. Not part of the website.",
+  "type": "module",
+  "scripts": {
+    "test": "node site.test.mjs",
+    "live": "node live.mjs"
+  },
+  "devDependencies": {
+    "axe-core": "4.10.2",
+    "playwright": "1.63.0"
+  }
+}

@@ -1334,7 +1334,16 @@ body{transition:background-color .4s ease,color .4s ease}
   btn.addEventListener('click',function(){var o=root.classList.toggle('menu-open');btn.setAttribute('aria-expanded',o);btn.setAttribute('aria-label',o?'Close menu':'Open menu')});
   d.querySelectorAll('.nav-links a').forEach(function(a){a.addEventListener('click',function(){root.classList.remove('menu-open');btn.setAttribute('aria-expanded','false')})});
 
+  /* Every feature below runs in its own safety box: if one ever fails (a future edit, an odd
+     browser), it logs the error and the rest of the page - menu, language, form - keeps working. */
+  function fail(name,e){ try{ console.error('[Beezy] '+name+' stopped:',e); }catch(x){} }
+  function call(fn){ try{ if(typeof fn==='function') fn(); }catch(e){ fail('helper',e); } }
+  function unhide(){ try{ [].forEach.call(d.querySelectorAll('.pre'),function(el){ el.classList.remove('pre'); }); }catch(e){} }
+  /* last line of defence: never leave content invisible (fade-in not finished) after an error or when printing */
+  W.addEventListener('error',unhide); W.addEventListener('beforeprint',unhide);
+
   /* ---------- interactive dot field + cursor glow ---------- */
+  try{
   var cv=d.getElementById('field'), ctx=cv.getContext('2d'), glow=d.getElementById('glow');
   var dots=[], VW=0, VH=0, mx=-9999, my=-9999, gx=-9999, gy=-9999, running=false, lastMove=0;
   function build(){
@@ -1424,8 +1433,10 @@ body{transition:background-color .4s ease,color .4s ease}
       c.addEventListener('pointerdown',function(e){var r=c.getBoundingClientRect();c.style.setProperty('--px',(e.clientX-r.left)+'px');c.style.setProperty('--py',(e.clientY-r.top)+'px');c.dataset.tap=Date.now()});
     });
   }
+  }catch(e){ fail('background dots + glow',e); }
 
   /* ---------- statement words ---------- */
+  try{
   var st=d.getElementById('statement'), words=[], lit=-1;
   function splitStatement(){
     words=[]; lit=-1;
@@ -1441,8 +1452,10 @@ body{transition:background-color .4s ease,color .4s ease}
     })(st);
   }
   splitStatement();
+  }catch(e){ fail('statement words',e); }
 
   /* ---------- one scroll loop for every scroll-driven effect ---------- */
+  try{
   var heroInner=d.getElementById('heroInner'), heroCopy=heroInner.firstElementChild, floorB=d.querySelector('.floor b'), ticking=false;
   var pillars=[].slice.call(d.querySelectorAll('.pillar'));
   var cases=[].slice.call(d.querySelectorAll('.case')), reel=d.getElementById('reel'), r1=d.getElementById('r1'), r2=d.getElementById('r2');
@@ -1493,6 +1506,7 @@ body{transition:background-color .4s ease,color .4s ease}
   }
   W.addEventListener('scroll',function(){ if(!ticking){ticking=true;requestAnimationFrame(onScroll)} },{passive:true});
   onScroll();
+  }catch(e){ fail('scroll effects',e); }
 
   /* ---------- language + theme ---------- */
   var langBtn=d.getElementById('langBtn'), themeBtn=d.getElementById('themeBtn');
@@ -1501,7 +1515,7 @@ body{transition:background-color .4s ease,color .4s ease}
     var ar=l==='ar';
     root.lang=ar?'ar':'en'; root.dir=ar?'rtl':'ltr';
     I18N.forEach(function(el){ el.innerHTML=ar?el.getAttribute('data-ar'):el.getAttribute('data-en'); });
-    splitStatement(); setYear();
+    call(splitStatement); setYear();
     if(waHref){ var w=d.getElementById('waLink'); if(w) w.href=waHref; }
     d.title=ar?TITLE_AR:TITLE_EN;
     langBtn.textContent=ar?'English':'العربية';
@@ -1509,7 +1523,7 @@ body{transition:background-color .4s ease,color .4s ease}
     langBtn.setAttribute('aria-label',ar?'View the site in English':'عرض الموقع باللغة العربية');
     themeBtn.setAttribute('aria-label',themeLabel());
     if(save) store('beezy-lang',ar?'ar':'en');
-    requestAnimationFrame(onScroll);
+    requestAnimationFrame(function(){ call(typeof onScroll==='function'?onScroll:null); });
   }
   function themeLabel(){ var light=root.getAttribute('data-theme')==='light'; var ar=root.lang==='ar';
     return light?(ar?'التبديل إلى الوضع الداكن':'Switch to dark theme'):(ar?'التبديل إلى الوضع الفاتح':'Switch to light theme'); }
@@ -1517,7 +1531,7 @@ body{transition:background-color .4s ease,color .4s ease}
     if(th==='light') root.setAttribute('data-theme','light'); else root.removeAttribute('data-theme');
     themeBtn.setAttribute('aria-label',themeLabel());
     var tc=d.querySelector('meta[name="theme-color"]'); if(tc) tc.setAttribute('content',th==='light'?'#F4F7F5':'#000000');
-    readDot(); paint();
+    call(readDot); call(paint);
     if(save) store('beezy-theme',th);
   }
   langBtn.addEventListener('click',function(){ setLang(root.lang==='ar'?'en':'ar',true); });
@@ -1526,6 +1540,7 @@ body{transition:background-color .4s ease,color .4s ease}
   setTheme(root.getAttribute('data-theme')==='light'?'light':'dark',false);
 
   /* ---------- hero headline rotation ---------- */
+  try{
   (function(){
     var lines=[].slice.call(d.querySelectorAll('#rot .ln')), dots=[].slice.call(d.querySelectorAll('#rotDots button')), i=0, timer=null, DUR=5000;
     function show(n){
@@ -1539,8 +1554,10 @@ body{transition:background-color .4s ease,color .4s ease}
     dots.forEach(function(b,k){ b.addEventListener('click',function(){ show(k); start(); }); });
     start();
   })();
+  }catch(e){ fail('headline rotation',e); }
 
   /* ---------- logos: on touch screens, light them up one by one ---------- */
+  try{
   var tiles=[].slice.call(d.querySelectorAll('.logo:not(.more)'));
   if(!finePointer && 'IntersectionObserver' in W){
     var li=0, timer=null;
@@ -1558,8 +1575,10 @@ body{transition:background-color .4s ease,color .4s ease}
       else if(!e.isIntersecting && ftimer){ clearInterval(ftimer); ftimer=null; flagEls.forEach(function(t){t.classList.remove('lit')}); }
     }); },{threshold:.4}).observe(flagRow);
   }
+  }catch(e){ fail('logo + flag highlights',e); }
 
   /* ---------- count-up + reveal ---------- */
+  try{
   function fmt(v,dec){return dec?v.toFixed(dec):Math.round(v).toLocaleString('en-IN')}
   function countUp(el){
     var t=parseFloat(el.dataset.count), dec=+(el.dataset.decimals||0), pre=el.dataset.prefix||'', suf=el.dataset.suffix||'', t0=null, dur=1600;
@@ -1580,8 +1599,10 @@ body{transition:background-color .4s ease,color .4s ease}
     }); },{rootMargin:'0px 0px -8% 0px',threshold:.1});
     items.forEach(function(el){io.observe(el)});
   }
+  }catch(e){ fail('count-up + reveal',e); unhide(); }
 
   /* ---------- social reel: steady auto-scroll, unaffected by touch or hover ---------- */
+  try{
   (function(){
     var reel=d.getElementById('reel'); if(!reel || !W.requestAnimationFrame) return;
     var rm=W.matchMedia?W.matchMedia('(prefers-reduced-motion: reduce)'):{matches:false};
@@ -1647,8 +1668,10 @@ body{transition:background-color .4s ease,color .4s ease}
     else W.addEventListener('resize',function(){ rows.forEach(measure); });
     start();
   })();
+  }catch(e){ fail('poster reel',e); }
 
   /* ---------- lightbox ---------- */
+  try{
   var lb=d.getElementById('lightbox'), lbImg=d.getElementById('lbImg'), lbClose=d.getElementById('lbClose'), lastFocus=null;
   function openLb(src,alt){ lastFocus=d.activeElement; lbImg.src=src; lbImg.alt=alt||''; lb.hidden=false; d.body.style.overflow='hidden'; lbClose.focus(); }
   function closeLb(){ lb.hidden=true; d.body.style.overflow=''; lbImg.src='data:,'; if(lastFocus) lastFocus.focus(); }
@@ -1656,8 +1679,14 @@ body{transition:background-color .4s ease,color .4s ease}
   lbClose.addEventListener('click',closeLb);
   lb.addEventListener('click',function(e){ if(e.target===lb) closeLb(); });
   d.addEventListener('keydown',function(e){ if(e.key==='Escape' && !lb.hidden) closeLb(); });
+  }catch(e){ fail('lightbox',e); }
 
-  /* ---------- enquiry form → WhatsApp message ---------- */
+})();
+</script>
+<script>
+/* enquiry form -> WhatsApp: a script of its own, so nothing else on the page can ever stop it working */
+(function(){
+  var d=document, root=d.documentElement, W=window, waHref=null;
   var form=d.getElementById('enquiry'), sel=d.getElementById('f-service');
   d.querySelectorAll('[data-service]').forEach(function(a){a.addEventListener('click',function(){sel.value=a.dataset.service})});
   /* where the visitor came from (first touch this visit), saved with the lead */
