@@ -68,15 +68,15 @@
 # Redirects for pages from the previous website
 # ---------------------------------------------------------------------------
 # Old NFC business card page -> services (NFC Solutions) on the home page.
-# 302 = temporary, until we decide whether the old NFC page comes back.
+# 301 = permanent, so Google drops the old URL from its results.
 [[redirects]]
   from = "/nfc-card"
   to = "/#services"
-  status = 302
+  status = 301
 
 [[redirects]]
   from = "/nfc-card/*"
   to = "/#services"
-  status = 302
+  status = 301
 
 # Missing pages show 404.html automatically (Netlify serves it with a 404 status).
