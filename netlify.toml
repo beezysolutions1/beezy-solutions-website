@@ -64,4 +64,19 @@
     Content-Type = "application/manifest+json; charset=utf-8"
     Cache-Control = "public, max-age=86400"
 
+# ---------------------------------------------------------------------------
+# Redirects for pages from the previous website
+# ---------------------------------------------------------------------------
+# Old NFC business card page -> services (NFC Solutions) on the home page.
+# 302 = temporary, until we decide whether the old NFC page comes back.
+[[redirects]]
+  from = "/nfc-card"
+  to = "/#services"
+  status = 302
+
+[[redirects]]
+  from = "/nfc-card/*"
+  to = "/#services"
+  status = 302
+
 # Missing pages show 404.html automatically (Netlify serves it with a 404 status).
