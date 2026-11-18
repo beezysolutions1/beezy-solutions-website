@@ -56,10 +56,12 @@ await step('missing pages', async () => {
   if (r.status === 404 && r.body.includes('Beezy')) ok('missing pages show the branded 404 page'); else bad(`missing pages return ${r.status} instead of the branded 404 page`);
 });
 
-await step('old NFC page redirect', async () => {
-  const r = await get(SITE + '/nfc-card');
-  if (r.status === 301 && /\/#services$/.test(r.location)) ok('/nfc-card still redirects to services'); else bad(`/nfc-card returned ${r.status} → ${r.location || 'nowhere'} (expected 301 → /#services)`);
-});
+for (const path of ['/nfc-card', '/nfc-card.html']) {
+  await step(`old NFC page redirect ${path}`, async () => {
+    const r = await get(SITE + path);
+    if (r.status === 301 && /\/#services$/.test(r.location)) ok(`${path} still redirects to services`); else bad(`${path} returned ${r.status} → ${r.location || 'nowhere'} (expected 301 → /#services)`);
+  });
+}
 
 await step('non-www address', async () => {
   const r = await get(APEX + '/');

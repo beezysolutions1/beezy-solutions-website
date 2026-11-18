@@ -84,6 +84,12 @@
   to = "/#services"
   status = 301
 
+# The previous website served the page as /nfc-card.html; Google still lists that address.
+[[redirects]]
+  from = "/nfc-card.html"
+  to = "/#services"
+  status = 301
+
 # Missing pages show 404.html automatically (Netlify serves it with a 404 status).
 
 # The site's own tooling (checks, tests, GitHub settings) is not part of the website.
